@@ -87,7 +87,7 @@ lemma measure_sub_le_measure_mul_exp [SigmaFinite μ] [IsFiniteMeasure ν] (hμ�
     (s : Set α) (c : ℝ) (hμc : μ {x | c < llr μ ν x} ≠ ∞) :
     (μ s).toReal - (μ {x | c < llr μ ν x}).toReal ≤ (ν s).toReal * exp c := by
   by_cases hμs : μ s = ∞
-  · simp only [hμs, ENNReal.toReal_top, gt_iff_lt, zero_sub]
+  · simp only [hμs, ENNReal.toReal_top, zero_sub]
     calc - (μ {x | c < llr μ ν x}).toReal
       ≤ 0 := by simp
     _ ≤ (ν s).toReal * exp c := by positivity

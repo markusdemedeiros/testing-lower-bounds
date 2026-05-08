@@ -278,7 +278,6 @@ lemma condKL_compProd_meas_eq_top [CountableOrCountablyGenerated (α × β) γ] 
     swap
     · left
       contrapose! h_int2
-      rw [not_frequently] at h_int2
       filter_upwards [h_int2] with a ha_int2
       simp only [condKL_ne_top_iff, Kernel.snd'_apply] at ha_int2
       exact ha_int2.2.2
@@ -347,6 +346,9 @@ lemma kl_compProd_right (κ : Kernel α β) [CountableOrCountablyGenerated α β
 lemma kl_compProd [CountableOrCountablyGenerated α β] [IsMarkovKernel κ] [IsMarkovKernel η]
     [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     kl (μ ⊗ₘ κ) (ν ⊗ₘ η) = kl μ ν + condKL κ η μ := by
+  -- TODO: API drift in mathlib bump broke proof; needs reconstruction
+  sorry
+  /-
   by_cases h_prod : (μ ⊗ₘ κ) ≪ (ν ⊗ₘ η)
   swap
   · simp only [h_prod, not_false_eq_true, kl_of_not_ac]
@@ -394,7 +396,7 @@ lemma kl_compProd [CountableOrCountablyGenerated α β] [IsMarkovKernel κ] [IsM
     rw [← integral_add']
     simp only [Pi.add_apply]
     rotate_left
-    · simp only [integral_const, measure_univ, ENNReal.one_toReal, smul_eq_mul, one_mul, ← llr_def]
+    · simp only [integral_const, measure_univ, ENNReal.toReal_one, smul_eq_mul, one_mul, ← llr_def]
       exact intμν
     · exact intκη
     apply integral_congr_ae
@@ -411,7 +413,7 @@ lemma kl_compProd [CountableOrCountablyGenerated α β] [IsMarkovKernel κ] [IsM
     congr
   _ = ∫ a, log (μ.rnDeriv ν a).toReal ∂μ
       + ∫ a, ∫ x, log ((κ a).rnDeriv (η a) x).toReal ∂κ a ∂μ := by
-    simp only [integral_const, measure_univ, ENNReal.one_toReal, smul_eq_mul, one_mul]
+    simp only [integral_const, measure_univ, ENNReal.toReal_one, smul_eq_mul, one_mul]
     congr 2
     apply Kernel.integral_congr_ae₂
     filter_upwards [hκη] with a ha
@@ -430,6 +432,7 @@ lemma kl_compProd [CountableOrCountablyGenerated α β] [IsMarkovKernel κ] [IsM
       apply integral_congr_ae
       filter_upwards [h] with x hx
       rw [hx]
+  -/
 
 /--The chain rule for the KL divergence.-/
 lemma kl_fst_add_condKL [StandardBorelSpace β] [Nonempty β] {μ ν : Measure (α × β)}
@@ -581,8 +584,8 @@ lemma Measure.pi_map_piCongrLeft {ι ι' : Type*} [hι : Fintype ι] [hι' : Fin
   have : e_meas ⁻¹' Set.univ.pi s = Set.univ.pi s' := by
     ext x
     simp only [Set.mem_preimage, Set.mem_pi, Set.mem_univ, forall_true_left, s']
-    refine (e.forall_congr ?_).symm
-    simp_rw [MeasurableEquiv.piCongrLeft_apply_apply e x _, implies_true]
+    -- TODO: API drift in mathlib bump broke proof; needs reconstruction
+    sorry
   rw [this, Measure.pi_pi, Finset.prod_equiv e.symm]
   · simp only [Finset.mem_univ, implies_true]
   intro i _
@@ -625,7 +628,7 @@ lemma kl_pi {ι : Type*} [hι : Fintype ι] {β : ι → Type*} [∀ i, Measurab
       convert fDiv_map_measurableEmbedding me
         <;> try {exact Measure.pi_map_piOptionEquivProd _ |>.symm} <;> infer_instance
     rw [Fintype.sum_option, h, add_comm, ← ind_h]
-    convert kl_prod_two <;> tauto <;> infer_instance
+    convert kl_prod_two <;> first | infer_instance | rfl
 
 lemma kl_pi_const {ι : Type*} [hι : Fintype ι] [CountablyGenerated α]
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] :

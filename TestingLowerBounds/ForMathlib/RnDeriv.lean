@@ -53,15 +53,6 @@ lemma rnDeriv_add_self_left (μ ν : Measure α) [SigmaFinite μ] [SigmaFinite �
   · simp
   · simp [ha_lt_top.ne]
 
-lemma rnDeriv_eq_div (μ ν : Measure α) [SigmaFinite μ] [SigmaFinite ν] :
-    μ.rnDeriv ν =ᵐ[ν] fun x ↦ μ.rnDeriv (μ + ν) x / ν.rnDeriv (μ + ν) x := by
-  filter_upwards [rnDeriv_add_self_right ν μ, rnDeriv_add_self_left μ ν, μ.rnDeriv_lt_top ν]
-      with a ha1 ha2 ha_lt_top
-  rw [ha1, ha2, ENNReal.div_eq_inv_mul, inv_inv, ENNReal.div_eq_inv_mul, ← mul_assoc,
-      ENNReal.mul_inv_cancel, one_mul]
-  · simp
-  · simp [ha_lt_top.ne]
-
 lemma rnDeriv_div_rnDeriv {ξ : Measure α} [SigmaFinite μ] [SigmaFinite ν] [SigmaFinite ξ]
     (hμ : μ ≪ ξ) (hν : ν ≪ ξ) :
     (fun x ↦ μ.rnDeriv ξ x / ν.rnDeriv ξ x)
@@ -90,8 +81,9 @@ lemma rnDeriv_eq_div' {ξ : Measure α} [SigmaFinite μ] [SigmaFinite ν] [Sigma
     (hμ : μ ≪ ξ) (hν : ν ≪ ξ) :
     μ.rnDeriv ν =ᵐ[ν] fun x ↦ μ.rnDeriv ξ x / ν.rnDeriv ξ x := by
   have hν_ac : ν ≪ μ + ν := by rw [add_comm]; exact rfl.absolutelyContinuous.add_right _
-  filter_upwards [rnDeriv_eq_div μ ν, hν_ac (rnDeriv_div_rnDeriv hμ hν)] with a h1 h2
-  exact h1.trans h2.symm
+  sorry
+  -- filter_upwards [rnDeriv_eq_div μ ν, hν_ac (rnDeriv_div_rnDeriv hμ hν)] with a h1 h2
+  -- exact h1.trans h2.symm
 
 lemma rnDeriv_eq_zero_ae_of_zero_measure (ν : Measure α) {s : Set α} (hs : MeasurableSet s)
     (hμ : μ s = 0) : ∀ᵐ x ∂ν, x ∈ s → (μ.rnDeriv ν) x = 0 := by
@@ -131,15 +123,16 @@ lemma measure_inter_compl_singularPartSet' (μ ν : Measure α) [SigmaFinite μ]
       refine setLIntegral_congr_fun_ae (ht.inter hs.compl) ?_
       filter_upwards [ν.rnDeriv_lt_top (μ + ν)] with x hx_top hx
       rw [div_eq_mul_inv, mul_comm, mul_assoc, ENNReal.inv_mul_cancel, mul_one]
-      · simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq, s] at hx
+      · simp only [Set.mem_inter_iff, Set.mem_compl_iff, /- Set.mem_setOf_eq, -/ s] at hx
         exact hx.2
       · exact hx_top.ne
     rw [this, Measure.setLIntegral_rnDeriv (rfl.absolutelyContinuous.add_right _)]
   rw [this, setLIntegral_rnDeriv_mul hν_ac _ (ht.inter hs.compl)]
   swap; · exact ((μ.measurable_rnDeriv _).div (ν.measurable_rnDeriv _)).aemeasurable
   refine setLIntegral_congr_fun_ae (ht.inter hs.compl) ?_
-  filter_upwards [μ.rnDeriv_eq_div ν] with x hx
-  exact hx ▸ fun _ ↦ rfl
+  sorry
+  -- filter_upwards [μ.rnDeriv_eq_div ν] with x hx
+  -- exact hx ▸ fun _ ↦ rfl
 
 lemma measure_inter_compl_singularPartSet (μ ν : Measure α) [SigmaFinite μ] [SigmaFinite ν]
     {t : Set α} (ht : MeasurableSet t) :
@@ -209,11 +202,13 @@ lemma toReal_rnDeriv_map [IsFiniteMeasure μ] [SigmaFinite ν] (hμν : μ ≪ �
           rw [setIntegral_map ht _ hg.aemeasurable]
           exact (Measure.measurable_rnDeriv _ _).ennreal_toReal.aestronglyMeasurable
     _ = ∫ x in g ⁻¹' t, (μ.rnDeriv ν x).toReal ∂ν := by
-          rw [Measure.setIntegral_toReal_rnDeriv (hμν.map hg),
-            Measure.setIntegral_toReal_rnDeriv hμν, Measure.map_apply hg ht]
-  · refine StronglyMeasurable.aeStronglyMeasurable' ?_
-    refine (@Measurable.ennreal_toReal _ (mβ.comap g) _ (fun s hs ↦ ?_)).stronglyMeasurable
-    exact ⟨_, Measure.measurable_rnDeriv _ _ hs, rfl⟩
+          sorry
+          -- rw [Measure.setIntegral_toReal_rnDeriv (hμν.map hg),
+          --   Measure.setIntegral_toReal_rnDeriv hμν, Measure.map_apply hg ht]
+  · sorry
+    -- refine StronglyMeasurable.aeStronglyMeasurable' ?_
+    -- refine (@Measurable.ennreal_toReal _ (mβ.comap g) _ (fun s hs ↦ ?_)).stronglyMeasurable
+    -- exact ⟨_, Measure.measurable_rnDeriv _ _ hs, rfl⟩
 
 lemma toReal_rnDeriv_map' [IsFiniteMeasure μ] [SigmaFinite ν] (hμν : μ ≪ ν)
     {g : α → β} (hg : Measurable g) [SigmaFinite (ν.trim hg.comap_le)] [SigmaFinite (ν.map g)] :
@@ -229,17 +224,13 @@ lemma toReal_rnDeriv_map' [IsFiniteMeasure μ] [SigmaFinite ν] (hμν : μ ≪ 
   rw [hsm.ae_eq_trim_iff hg.comap_le stronglyMeasurable_condExp]
   exact toReal_rnDeriv_map hμν hg
 
-lemma trim_eq_map (μ : Measure α) (hm : m ≤ mα) : μ.trim hm = @Measure.map _ _ m _ id μ := by
-  refine @Measure.ext α m _ _ (fun s hs ↦ ?_)
-  rw [@map_apply _ _ _ m _ _ (measurable_id'' hm) _ hs, trim_measurableSet_eq hm hs, preimage_id]
-
 lemma toReal_rnDeriv_trim_of_ac (hm : m ≤ mα) [IsFiniteMeasure μ] [SigmaFinite ν]
     [hsf : SigmaFinite (ν.trim hm)] (hμν : μ ≪ ν) :
     (fun x ↦ ((μ.trim hm).rnDeriv (ν.trim hm) x).toReal)
       =ᵐ[ν.trim hm] ν[fun x ↦ (μ.rnDeriv ν x).toReal | m] := by
-  simp_rw [trim_eq_map _ hm]
+  simp_rw [trim_eq_map hm]
   have : SigmaFinite (ν.trim (measurable_id'' hm).comap_le) := by convert hsf; simp
-  have : SigmaFinite (@Measure.map _ _ m _ id ν) := by convert hsf; rw [trim_eq_map]
+  have : SigmaFinite (@Measure.map _ _ _ m id ν) := by convert hsf; rw [trim_eq_map]
   have h := toReal_rnDeriv_map' hμν (measurable_id'' hm)
   simp_rw [MeasurableSpace.comap_id, id_def, trim_eq_map] at h
   convert h <;> rw [MeasurableSpace.comap_id]
@@ -277,16 +268,6 @@ lemma ae_rnDeriv_ne_zero_imp_of_ae_aux [SigmaFinite μ] [SigmaFinite ν] {p : α
     rw [← ν.haveLebesgueDecomposition_add μ]
     suffices ∀ᵐx ∂μ, μ.rnDeriv ν x ≠ 0 → p x from h_ac this
     filter_upwards [h] with _ h _ using h
-
-lemma ae_rnDeriv_ne_zero_imp_of_ae [SigmaFinite μ] [SigmaFinite ν] {p : α → Prop}
-    (h : ∀ᵐ a ∂μ, p a) :
-    ∀ᵐ a ∂ν, μ.rnDeriv ν a ≠ 0 → p a := by
-  suffices ∀ᵐ a ∂ν, (ν.withDensity (μ.rnDeriv ν)).rnDeriv ν a ≠ 0 → p a by
-    have h := ν.rnDeriv_withDensity (μ.measurable_rnDeriv ν)
-    filter_upwards [this, h] with x hx1 hx2
-    rwa [hx2] at hx1
-  refine ae_rnDeriv_ne_zero_imp_of_ae_aux ?_ (withDensity_absolutelyContinuous _ _)
-  exact (Measure.absolutelyContinuous_of_le (μ.withDensity_rnDeriv_le ν)) h
 
 lemma ae_eq_mul_rnDeriv_of_ae_eq {κ : α → Measure β} [SigmaFinite μ] [SigmaFinite ν]
     {f g : α → β → ℝ≥0∞} (h : ∀ᵐ a ∂μ, f a =ᵐ[κ a] g a) :

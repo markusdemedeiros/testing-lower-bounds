@@ -71,8 +71,8 @@ lemma integrable_f_rnDeriv_map [IsFiniteMeasure μ] [IsFiniteMeasure ν]
   · exact f_rnDeriv_map_le hμν hg hf hf_cvx hf_cont h_int
   · refine (Integrable.const_mul ?_ _).add (integrable_const _)
     rw [integrable_congr (Measure.toReal_rnDeriv_map hμν hg)]
-    exact integrable_condexp
-  · exact integrable_condexp
+    exact integrable_condExp
+  · exact integrable_condExp
 
 lemma fDiv_map_of_ac [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     (hμν : μ ≪ ν) {g : α → β} (hg : Measurable g) (hf : StronglyMeasurable f)
@@ -96,7 +96,7 @@ lemma fDiv_trim_of_ac [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hm : m ≤ mα)
     (hf_cvx : ConvexOn ℝ (Ici 0) f) (hf_cont : ContinuousOn f (Ici 0))
     (h_int : Integrable (fun x ↦ f ((∂μ/∂ν) x).toReal) ν) :
     fDiv f (μ.trim hm) (ν.trim hm) = ∫ x, f ((ν[fun x ↦ ((∂μ/∂ν) x).toReal | m]) x) ∂ν := by
-  simp_rw [Measure.trim_eq_map]
+  simp_rw [trim_eq_map]
   rw [fDiv_map_of_ac hμν (measurable_id'' hm) hf hf_cvx hf_cont h_int]
   congr with x
   congr
@@ -131,7 +131,7 @@ lemma integrable_f_rnDeriv_trim [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hm : 
   · exact f_rnDeriv_trim_le hm hμν hf hf_cvx hf_cont h_int
   · refine (Integrable.const_mul ?_ _).add (integrable_const _)
     exact Measure.integrable_toReal_rnDeriv
-  · exact integrable_condexp.trim hm stronglyMeasurable_condexp
+  · exact integrable_condExp.trim hm stronglyMeasurable_condExp
 
 lemma integrable_f_condexp_rnDeriv [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     (hm : m ≤ mα) (hμν : μ ≪ ν)
@@ -156,8 +156,8 @@ theorem fDiv_map_le [IsFiniteMeasure μ] [IsFiniteMeasure ν]
   classical
   rw [fDiv_of_absolutelyContinuous hμν, if_pos h_int]
   norm_cast
-  conv_rhs => rw [← integral_condexp hg.comap_le]
-  refine integral_mono_ae ?_ integrable_condexp ?_
+  conv_rhs => rw [← integral_condExp hg.comap_le]
+  refine integral_mono_ae ?_ integrable_condExp ?_
   · exact integrable_f_condexp_rnDeriv hg.comap_le hμν hf hf_cvx hf_cont h_int
   · refine ae_of_ae_trim hg.comap_le ?_
     exact f_condexp_rnDeriv_le hg.comap_le hf hf_cvx hf_cont h_int
@@ -167,7 +167,7 @@ theorem fDiv_trim_le [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hm : m ≤ mα)
     (hf : StronglyMeasurable f)
     (hf_cvx : ConvexOn ℝ (Ici 0) f) (hf_cont : ContinuousOn f (Ici 0)) :
     fDiv f (μ.trim hm) (ν.trim hm) ≤ fDiv f μ ν := by
-  simp_rw [Measure.trim_eq_map]
+  simp_rw [trim_eq_map]
   exact fDiv_map_le (measurable_id'' hm) hf hf_cvx hf_cont
 
 -- todo: remove the ac hypothesis?
@@ -185,7 +185,7 @@ lemma fDiv_trim_comap_rnDeriv_of_ac [IsFiniteMeasure μ] [IsFiniteMeasure ν] (h
   have h_ae_eq : (fun x ↦ f ((∂μ.trim hm/∂ν.trim hm) x).toReal)
       =ᵐ[ν.trim hm] fun x ↦ f (μ.rnDeriv ν x).toReal := by
     filter_upwards [Measure.toReal_rnDeriv_trim_of_ac hm hμν] with x hx
-    rw [hx, condexp_of_stronglyMeasurable hm]
+    rw [hx, condExp_of_stronglyMeasurable hm]
     · refine Measurable.stronglyMeasurable ?_
       exact fun s hs ↦ ⟨(fun x ↦ x.toReal) ⁻¹' s, ENNReal.measurable_toReal hs, rfl⟩
     · exact Measure.integrable_toReal_rnDeriv

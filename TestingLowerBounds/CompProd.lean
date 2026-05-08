@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import TestingLowerBounds.Convex
-import TestingLowerBounds.ForMathlib.Integrable
 import TestingLowerBounds.ForMathlib.RadonNikodym
+import Mathlib.MeasureTheory.Function.L1Space.Integrable
+import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
+
 
 /-!
 
@@ -30,7 +32,7 @@ lemma singularPart_compProd_left (μ ν : Measure α) [IsFiniteMeasure μ] [IsFi
   conv_lhs => rw [μ.haveLebesgueDecomposition_add ν, Measure.compProd_add_left,
     Measure.singularPart_add]
   have : (ν.withDensity (∂μ/∂ν) ⊗ₘ κ).singularPart (ν ⊗ₘ κ) = 0 := by
-    refine Measure.singularPart_eq_zero_of_ac (Measure.absolutelyContinuous_compProd ?_ ?_)
+    refine Measure.singularPart_eq_zero_of_ac (Measure.AbsolutelyContinuous.compProd ?_ ?_)
     · exact withDensity_absolutelyContinuous _ _
     · exact ae_of_all _ fun _ ↦ by rfl
   rw [this, add_zero]
@@ -49,7 +51,7 @@ lemma singularPart_compProd'' (μ ν : Measure α) [IsFiniteMeasure μ] [IsFinit
     μ.haveLebesgueDecomposition_add ν]
   simp_rw [Measure.compProd_add_left, Measure.singularPart_add]
   have : (ν.withDensity (∂μ/∂ν) ⊗ₘ η.withDensity (κ.rnDeriv η)).singularPart (ν ⊗ₘ η) = 0 := by
-    refine Measure.singularPart_eq_zero_of_ac (Measure.absolutelyContinuous_compProd ?_ ?_)
+    refine Measure.singularPart_eq_zero_of_ac (Measure.AbsolutelyContinuous.compProd ?_ ?_)
     · exact withDensity_absolutelyContinuous _ _
     · exact ae_of_all _ (Kernel.withDensity_absolutelyContinuous _)
   rw [this, add_zero, ← add_assoc]
@@ -100,8 +102,9 @@ variable {E : Type*}
 theorem _root_.MeasureTheory.Integrable.compProd_mk_left_ae' [NormedAddCommGroup E]
     [SFinite μ] [IsSFiniteKernel κ] ⦃f : α × β → E⦄
     (hf : Integrable f (μ ⊗ₘ κ)) :
-    ∀ᵐ x ∂μ, Integrable (fun y ↦ f (x, y)) (κ x) :=
-  hf.compProd_mk_left_ae
+    ∀ᵐ x ∂μ, Integrable (fun y ↦ f (x, y)) (κ x) := by
+  rw [Measure.compProd] at hf
+  simpa using hf.ae_of_compProd
 
 theorem _root_.MeasureTheory.Integrable.integral_norm_compProd' [NormedAddCommGroup E]
     [SFinite μ] [IsSFiniteKernel κ] ⦃f : α × β → E⦄
@@ -206,14 +209,15 @@ lemma integrable_f_rnDeriv_compProd_iff' [IsFiniteMeasure μ] [IsFiniteMeasure �
     filter_upwards [h_int'.1] with x h_int'
     rw [integral_add _ (integrable_const _)]
     swap; · exact h_int'.const_mul _
-    simp only [integral_const, smul_eq_mul, neg_add_rev, neg_mul]
+    simp only [integral_const, smul_eq_mul, neg_add_rev, neg_mul, Measure.real_def]
     rw [add_comm, mul_comm]
     congr 1
     rw [mul_comm c, ← smul_eq_mul, ← integral_smul_const]
     simp_rw [smul_eq_mul, mul_comm _ c]
   rw [integrable_congr this]
   refine Integrable.sub (h_int_compProd.const_mul _) (Integrable.const_mul ?_ _)
-  simp_rw [← integral_indicator_one MeasurableSet.univ]
+  simp_rw [show (fun x : α ↦ (η x .univ).toReal) = fun x ↦ (η x).real Set.univ from rfl,
+    ← integral_indicator_one MeasurableSet.univ]
   simp only [Set.mem_univ, Set.indicator_of_mem, Pi.one_apply]
   exact Integrable.integral_compProd' (f := fun _ ↦ 1) (integrable_const _)
 
@@ -254,7 +258,7 @@ lemma integral_f_compProd_left_congr (μ ν : Measure α) [IsFiniteMeasure μ] [
       =ᵐ[ν] fun a ↦ (κ a .univ).toReal * f ((∂μ/∂ν) a).toReal := by
   filter_upwards [f_compProd_congr_left μ ν κ] with a ha
   rw [integral_congr_ae ha]
-  simp
+  simp [Measure.real_def]
 
 lemma integrable_f_rnDeriv_compProd_left_iff' [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     [IsFiniteKernel κ] (hf : StronglyMeasurable f) (h_cvx : ConvexOn ℝ (Set.Ici 0) f) :

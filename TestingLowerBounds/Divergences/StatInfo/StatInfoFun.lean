@@ -9,7 +9,7 @@ import TestingLowerBounds.DerivAtTop
 
 open MeasureTheory Set Filter Topology StieltjesFunction
 
-open scoped ENNReal NNReal
+open scoped ENNReal NNReal Interval
 
 namespace ProbabilityTheory
 
@@ -35,13 +35,13 @@ lemma const_mul_statInfoFun {a : ℝ} (ha : 0 ≤ a) :
     a * statInfoFun β γ x = statInfoFun (a * β) (a * γ) x := by
   simp_rw [statInfoFun, mul_ite, mul_max_of_nonneg _ _ ha, mul_sub, mul_zero, mul_assoc]
   rcases lt_or_eq_of_le ha with (ha | rfl)
-  · simp_rw [mul_le_mul_left ha]
+  · simp_rw [mul_le_mul_iff_of_pos_left ha]
   · simp
 
 lemma statInfoFun_neg_neg (h : β ≠ γ) : statInfoFun (-β) (-γ) = statInfoFun β γ := by
   ext
   rcases lt_or_gt_of_ne h with (hγβ | hγβ)
-    <;> simp [statInfoFun, sub_eq_add_neg, hγβ.le, hγβ.not_le, add_comm]
+    <;> simp [statInfoFun, sub_eq_add_neg, hγβ.le, hγβ.not_ge, add_comm]
 
 --TODO: for now I will leave the continuity assumption in some lemmas, it should be derived from the convexity but the lemma is not yet in mathlib, when it gets there we can remove this assumption
 
@@ -71,7 +71,7 @@ section statInfoFun_x
 
 lemma statInfoFun_of_le (h : γ ≤ β) : statInfoFun β γ x = max 0 (γ - β * x) := if_pos h
 
-lemma statInfoFun_of_gt (h : γ > β) : statInfoFun β γ x = max 0 (β * x - γ) := if_neg h.not_le
+lemma statInfoFun_of_gt (h : γ > β) : statInfoFun β γ x = max 0 (β * x - γ) := if_neg h.not_ge
 
 lemma statInfoFun_of_pos_of_le_of_le (hβ : 0 < β) (hγ : γ ≤ β) (hx : x ≤ γ / β) :
     statInfoFun β γ x = γ - β * x :=
@@ -109,7 +109,7 @@ lemma statInfoFun_of_one_of_le_one (h : γ ≤ 1) : statInfoFun 1 γ x = max 0 (
   statInfoFun_of_one ▸ if_pos h
 
 lemma statInfoFun_of_one_of_one_lt (h : 1 < γ) : statInfoFun 1 γ x = max 0 (x - γ) :=
-  statInfoFun_of_one ▸ if_neg h.not_le
+  statInfoFun_of_one ▸ if_neg h.not_ge
 
 lemma statInfoFun_of_one_of_le_one_of_le (h : γ ≤ 1) (hx : x ≤ γ) : statInfoFun 1 γ x = γ - x :=
   statInfoFun_of_one_of_le_one h ▸ max_eq_right_iff.mpr (sub_nonneg.mpr hx)
@@ -129,9 +129,8 @@ lemma convexOn_statInfoFun (β γ : ℝ) : ConvexOn ℝ univ (fun x ↦ statInfo
   · simp only [h, ↓reduceIte]
     refine (convexOn_const 0 convex_univ).sup ⟨convex_univ, fun x _ y _ a b _ _ hab ↦ le_of_eq ?_⟩
     dsimp
-    ring_nf
-    simp only [← mul_add, hab, mul_one, show (-(a * γ) - b * γ) = -(a + b) * γ from by ring,
-      add_assoc, sub_eq_add_neg, neg_mul, one_mul]
+    have : (a + b) * γ = γ := by rw [hab, one_mul]
+    linarith [this]
 
 section derivAtTop
 
@@ -202,15 +201,15 @@ lemma derivAtTop_statInfoFun_eq :
       = if 0 ≤ β then (if γ ≤ β then 0 else β) else if γ ≤ β then -β else 0 := by
   by_cases hβ : 0 ≤ β <;> by_cases hγ : γ ≤ β <;> simp [derivAtTop_statInfoFun_of_nonneg_of_le,
     derivAtTop_statInfoFun_of_nonneg_of_gt, derivAtTop_statInfoFun_of_nonpos_of_le,
-    derivAtTop_statInfoFun_of_nonpos_of_gt, hβ, hγ, lt_of_not_le, le_of_lt (lt_of_not_le _)]
+    derivAtTop_statInfoFun_of_nonpos_of_gt, hβ, hγ, lt_of_not_ge, le_of_lt (lt_of_not_ge _)]
 
 lemma derivAtTop_statInfoFun_ne_top (β γ : ℝ) : derivAtTop (fun x ↦ statInfoFun β γ x) ≠ ⊤ := by
-  rcases le_total 0 β with (hβ | hβ) <;> rcases le_or_lt γ β with (hγ | hγ) <;>
+  rcases le_total 0 β with (hβ | hβ) <;> rcases le_or_gt γ β with (hγ | hγ) <;>
     simp [derivAtTop_statInfoFun_of_nonneg_of_le, derivAtTop_statInfoFun_of_nonneg_of_gt,
       derivAtTop_statInfoFun_of_nonpos_of_le, derivAtTop_statInfoFun_of_nonpos_of_gt, hβ, hγ]
 
 lemma derivAtTop_statInfoFun_nonneg (β γ : ℝ) : 0 ≤ derivAtTop (fun x ↦ statInfoFun β γ x) := by
-  rcases le_total 0 β with (hβ | hβ) <;> rcases le_or_lt γ β with (hγ | hγ) <;>
+  rcases le_total 0 β with (hβ | hβ) <;> rcases le_or_gt γ β with (hγ | hγ) <;>
     simp [derivAtTop_statInfoFun_of_nonneg_of_le, derivAtTop_statInfoFun_of_nonneg_of_gt,
       ← EReal.coe_neg, derivAtTop_statInfoFun_of_nonpos_of_le,
       derivAtTop_statInfoFun_of_nonpos_of_gt, hβ, hγ]
@@ -234,7 +233,7 @@ lemma statInfoFun_of_nonneg_of_right_le_one (hβ : 0 ≤ β) (hx : x ≤ 1) :
 lemma statInfoFun_of_nonneg_of_one_le_right (hβ : 0 ≤ β) (hx : 1 ≤ x) :
     statInfoFun β γ x = (Ioc β (β * x)).indicator (fun y ↦ β * x - y) γ := by
   by_cases hγβ : γ ≤ β
-  · simp [statInfoFun, hγβ, indicator, hγβ.trans (le_mul_of_one_le_right hβ hx), hγβ.not_lt]
+  · simp [statInfoFun, hγβ, indicator, hγβ.trans (le_mul_of_one_le_right hβ hx), hγβ.not_gt]
   · by_cases hγβx : γ ≤ β * x
     · simp [statInfoFun, hγβ, hγβx, lt_of_not_ge hγβ]
     · simp [statInfoFun, hγβ, hγβx, le_of_not_ge hγβx]
@@ -242,7 +241,7 @@ lemma statInfoFun_of_nonneg_of_one_le_right (hβ : 0 ≤ β) (hx : 1 ≤ x) :
 lemma statInfoFun_of_nonpos_of_right_le_one (hβ : β ≤ 0) (hx : x ≤ 1) :
     statInfoFun β γ x = (Ioc β (β * x)).indicator (fun y ↦ β * x - y) γ := by
   by_cases hγβ : γ ≤ β
-  · simp only [statInfoFun, hγβ, ↓reduceIte, indicator, mem_Ioc, hγβ.not_lt, false_and,
+  · simp only [statInfoFun, hγβ, ↓reduceIte, indicator, mem_Ioc, hγβ.not_gt, false_and,
       max_eq_left_iff, tsub_le_iff_right, zero_add]
     suffices -β * x ≤ -γ from by simpa only [neg_mul, neg_le_neg_iff]
     exact (mul_le_of_le_one_right (neg_nonneg.mpr hβ) hx).trans (neg_le_neg_iff.mpr hγβ)
@@ -257,7 +256,7 @@ lemma statInfoFun_of_nonpos_of_one_le_right (hβ : β ≤ 0) (hx : 1 ≤ x) :
     · simp [statInfoFun, indicator, hβxγ, hβxγ.le]
     · simp [statInfoFun, hγβ, hβxγ, (le_of_not_gt hβxγ)]
   · simp only [statInfoFun, hγβ, ↓reduceIte, mem_Ioc, and_false, not_false_eq_true,
-      indicator_of_not_mem, max_eq_left_iff, tsub_le_iff_right, zero_add]
+      indicator_of_notMem, max_eq_left_iff, tsub_le_iff_right, zero_add]
     suffices -β * x ≥ -γ from by simpa only [neg_mul, neg_le_neg_iff]
     exact ((neg_lt_neg_iff.mpr (lt_of_not_ge hγβ)).trans_le
       ((le_mul_of_one_le_right (neg_nonneg.mpr hβ) hx))).le

@@ -66,8 +66,8 @@ lemma condFDiv_kernel_snd'_integrable_iff [CountableOrCountablyGenerated (α × 
         apply mul_le_mul_of_nonneg_left _ (abs_nonneg _)
         gcongr
         · exact measure_ne_top (κ (a, b)) .univ
-        · exact (κ (a, b)).singularPart_le (η (a, b)) .univ
-      _ = _ := by rw [measure_univ, ENNReal.one_toReal, mul_one]
+        · exact (κ (a, b)).singularPart_le (η (a, b))
+      _ = _ := by rw [measure_univ, ENNReal.toReal_one, mul_one]
   have h_int2' : ∀ᵐ a ∂μ, Integrable (fun b ↦ (fDiv f (κ (a, b)) (η (a, b))).toReal) (ξ a) := by
     filter_upwards [eventually_all.mpr h_ac, h_int, h_int2] with a ha_ae ha_int ha_int2
     simp_rw [← Kernel.snd'_apply] at ha_int2 ha_int ha_ae ⊢
@@ -90,7 +90,7 @@ lemma condFDiv_kernel_snd'_integrable_iff [CountableOrCountablyGenerated (α × 
       + ((ξ a) .univ).toReal * |(derivAtTop f).toReal|)
     swap
     · filter_upwards [h_int2'] with a ha_int2'
-      rw [integral_add ha_int2' (integrable_const _), integral_const, smul_eq_mul]
+      rw [integral_add ha_int2' (integrable_const _), integral_const, smul_eq_mul, Measure.real_def]
     -- we already know the integrability of the integral (hp `h`) and the other part is just a
     -- constant times a finite Kernel applied to a fixed set, so it's easy to show that
     -- it's integrable
@@ -111,7 +111,7 @@ lemma condFDiv_kernel_snd'_integrable_iff [CountableOrCountablyGenerated (α × 
       ∂ξ a + ((ξ a) .univ).toReal * |(derivAtTop f).toReal|)
     swap
     · filter_upwards [h_int2] with a ha_int2
-      rw [integral_add ha_int2.abs (integrable_const _), integral_const, smul_eq_mul]
+      rw [integral_add ha_int2.abs (integrable_const _), integral_const, smul_eq_mul, Measure.real_def]
     -- same as above
     exact h.add (Integrable.Kernel _ .univ |>.mul_const _)
 
@@ -174,7 +174,7 @@ lemma condFDiv_compProd_meas_eq_top [CountableOrCountablyGenerated (α × β) γ
         h_ac h_int h_int2 hf_meas hf_cvx hf_cont hf_one).mp.mt h
     · left
       contrapose! h_int2
-      simp_rw [not_frequently, condFDiv_ne_top_iff hf_cvx] at h_int2
+      simp_rw [condFDiv_ne_top_iff hf_cvx] at h_int2
       filter_upwards [h_int2] with a ha_int2
       simp_rw [← Kernel.snd'_apply, ha_int2.2.1]
   · intro h

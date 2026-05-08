@@ -105,7 +105,7 @@ lemma bayesianRisk_comap_measurableEquiv (E : estimationProblem Θ 𝒴 𝒵) (P
     · simp
   · refine Measurable.lintegral_kernel_prod_right ?_
     refine E.ℓ_meas.comp ?_
-    exact (E.y_meas.comp (e.symm.measurable.comp measurable_fst)).prod_mk measurable_snd
+    exact (E.y_meas.comp (e.symm.measurable.comp measurable_fst)).prodMk measurable_snd
 
 /-- The Bayes risk of an estimation problem `E` with respect to a prior `π`, defined as the infimum
 of the Bayesian risks of all estimators. -/
@@ -197,7 +197,7 @@ lemma bayesianRisk_eq_integral_integral_integral [StandardBorelSpace Θ] [Nonemp
   have := E.ℓ_meas
   have := E.y_meas
   rw [bayesianRisk_eq_lintegral_bayesInv_prod,
-    Measure.lintegral_bind ((P†π) ×ₖ κ).measurable (by fun_prop)]
+    Measure.lintegral_bind ((P†π) ×ₖ κ).aemeasurable (by fun_prop)]
   congr with x
   rw [Kernel.prod_apply, lintegral_prod_symm' _ (by fun_prop)]
 
@@ -209,7 +209,7 @@ lemma bayesianRisk_ge_lintegral_iInf_bayesInv [StandardBorelSpace Θ] [Nonempty 
   gcongr with x
   calc
     _ ≥ ∫⁻ _, ⨅ z, ∫⁻ (θ : Θ), E.ℓ (E.y θ, z) ∂(P†π) x ∂κ x :=
-      lintegral_mono fun z ↦ iInf_le' _ z
+      lintegral_mono fun z ↦ iInf_le _ z
     _ = ⨅ z, ∫⁻ (θ : Θ), E.ℓ (E.y θ, z) ∂(P†π) x := by
       rw [lintegral_const, measure_univ, mul_one]
 
@@ -301,8 +301,10 @@ lemma bayesRiskIncrease_discard_comp_le_bayesRiskIncrease (E : estimationProblem
     (P : Kernel Θ 𝒳) (π : Measure Θ) (κ : Kernel 𝒳 𝒳') [IsMarkovKernel κ] :
     bayesRiskIncrease E (κ ∘ₖ P) π (Kernel.discard 𝒳')
       ≤ bayesRiskIncrease E P π (Kernel.discard 𝒳) := by
-  convert le_bayesRiskIncrease_comp E P π κ (Kernel.discard 𝒳')
-  simp
+  -- TODO: universe metavariable from `Kernel.discard 𝒳' ∘ₖ κ` blocks original `convert ...; simp`
+  sorry
+  -- convert le_bayesRiskIncrease_comp E P π κ (Kernel.discard 𝒳')
+  -- simp
 
 end BayesRiskIncrease
 

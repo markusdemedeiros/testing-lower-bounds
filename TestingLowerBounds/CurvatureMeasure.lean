@@ -18,64 +18,7 @@ namespace StieltjesFunction
 open Set Filter Function ENNReal NNReal Topology MeasureTheory
 open ENNReal (ofReal)
 
-variable (f : StieltjesFunction)
-
---PR this to mathlib, just before `StieltjesFunction.measure_const`
-@[simp]
-lemma measure_zero : StieltjesFunction.measure 0 = 0 :=
-  Measure.ext_of_Ioc _ _ (fun _ _ _ ↦ by simp; rfl)
-
-
---PR this to mathlib, just after `StieltjesFunction.measure_Iic`
-lemma measure_Iio {l : ℝ} (hf : Tendsto f atBot (𝓝 l)) (x : ℝ) :
-    f.measure (Iio x) = ofReal (leftLim f x - l) := by
-  rw [← Iic_diff_right, measure_diff _ (nullMeasurableSet_singleton x), measure_singleton,
-    f.measure_Iic hf, ← ofReal_sub _ (sub_nonneg.mpr <| Monotone.leftLim_le f.mono' (le_refl _))]
-    <;> simp
-
---PR this to mathlib, just after `StieltjesFunction.measure_Ici`
-lemma measure_Ioi {l : ℝ} (hf : Tendsto f atTop (𝓝 l)) (x : ℝ) :
-    f.measure (Ioi x) = ofReal (l - f x) := by
-  rw [← Ici_diff_left, measure_diff _ (nullMeasurableSet_singleton x), measure_singleton,
-    f.measure_Ici hf, ← ofReal_sub _ (sub_nonneg.mpr <| Monotone.leftLim_le f.mono' (le_refl _))]
-    <;> simp
-
---PR this and the following lemmas to mathlib, just after `StieltjesFunction.measure_univ`
-lemma measure_Ioi_of_tendsto_atTop_atTop (hf : Tendsto f atTop atTop) (x : ℝ) :
-    f.measure (Ioi x) = ∞ := by
-  refine ENNReal.eq_top_of_forall_nnreal_le fun r ↦ ?_
-  obtain ⟨N, hN⟩ := eventually_atTop.mp (tendsto_atTop.mp hf (r + f x))
-  exact (f.measure_Ioc x (max x N) ▸ ENNReal.coe_nnreal_eq r ▸ (ENNReal.ofReal_le_ofReal <|
-    le_tsub_of_add_le_right <| hN _ (le_max_right x N))).trans (measure_mono Ioc_subset_Ioi_self)
-
-lemma measure_Ici_of_tendsto_atTop_atTop (hf : Tendsto f atTop atTop) (x : ℝ) :
-    f.measure (Ici x) = ∞ := by
-  rw [← top_le_iff, ← f.measure_Ioi_of_tendsto_atTop_atTop hf x]
-  exact measure_mono Ioi_subset_Ici_self
-
-lemma measure_Iic_of_tendsto_atBot_atBot (hf : Tendsto f atBot atBot) (x : ℝ) :
-    f.measure (Iic x) = ∞ := by
-  refine ENNReal.eq_top_of_forall_nnreal_le fun r ↦ ?_
-  obtain ⟨N, hN⟩ := eventually_atBot.mp (tendsto_atBot.mp hf (f x - r))
-  exact (f.measure_Ioc (min x N) x ▸ ENNReal.coe_nnreal_eq r ▸ (ENNReal.ofReal_le_ofReal <|
-    le_sub_comm.mp <| hN _ (min_le_right x N))).trans (measure_mono Ioc_subset_Iic_self)
-
-lemma measure_Iio_of_tendsto_atBot_atBot (hf : Tendsto f atBot atBot) (x : ℝ) :
-    f.measure (Iio x) = ∞ := by
-  rw [← top_le_iff, ← f.measure_Iic_of_tendsto_atBot_atBot hf (x - 1)]
-  exact measure_mono <| Set.Iic_subset_Iio.mpr <| sub_one_lt x
-
-lemma measure_univ_of_tendsto_atTop_atTop (hf : Tendsto f atTop atTop) :
-    f.measure univ = ∞ := by
-  rw [← top_le_iff, ← f.measure_Ioi_of_tendsto_atTop_atTop hf 0]
-  exact measure_mono fun _ _ ↦ trivial
-
-lemma measure_univ_of_tendsto_atBot_atBot (hf : Tendsto f atBot atBot) :
-    f.measure univ = ∞ := by
-  rw [← top_le_iff, ← f.measure_Iio_of_tendsto_atBot_atBot hf 0]
-  exact measure_mono fun _ _ ↦ trivial
-
-
+-- These lemmas have all been upstreamed to mathlib.
 end StieltjesFunction
 
 namespace ConvexOn
@@ -147,7 +90,7 @@ theorem convex_taylor (hf : ConvexOn ℝ univ f) (hf_cont : Continuous f) {a b :
     (fun x _ ↦ hf.hadDerivWithinAt_rightDeriv x) h_int]
   simp_rw [← neg_sub _ b, intervalIntegral.integral_neg, curvatureMeasure_of_convexOn hf,
     mul_neg, sub_neg_eq_add, mul_comm _ (a - b)]
-  let g := StieltjesFunction.id + StieltjesFunction.const (-b)
+  let g := StieltjesFunction.id + StieltjesFunction.const ℝ (-b)
   have hg : g = fun x ↦ x - b := rfl
   rw [← hg, integral_stieltjes_meas_by_parts g hf.rightDerivStieltjes]
   swap; · rw [hg]; fun_prop

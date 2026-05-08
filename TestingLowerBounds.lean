@@ -30,7 +30,6 @@ import TestingLowerBounds.FindAxioms
 import TestingLowerBounds.ForMathlib.AbsolutelyContinuous
 import TestingLowerBounds.ForMathlib.CountableOrCountablyGenerated
 import TestingLowerBounds.ForMathlib.EReal
-import TestingLowerBounds.ForMathlib.Integrable
 import TestingLowerBounds.ForMathlib.KernelFstSnd
 import TestingLowerBounds.ForMathlib.LeftRightDeriv
 import TestingLowerBounds.ForMathlib.LogLikelihoodRatioCompProd
@@ -40,9 +39,6 @@ import TestingLowerBounds.ForMathlib.RadonNikodym
 import TestingLowerBounds.ForMathlib.RnDeriv
 import TestingLowerBounds.IntegrableFRNDeriv
 import TestingLowerBounds.Kernel.BayesInv
-import TestingLowerBounds.Kernel.Deterministic
-import TestingLowerBounds.Kernel.DeterministicComp
-import TestingLowerBounds.Kernel.ParallelComp
 import TestingLowerBounds.MeasureCompProd
 import TestingLowerBounds.Sorry.ByParts
 import TestingLowerBounds.Sorry.Jensen

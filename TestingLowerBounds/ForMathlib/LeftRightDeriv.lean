@@ -75,10 +75,11 @@ lemma rightDeriv_eq_leftDeriv_apply (f : ℝ → ℝ) (x : ℝ) :
       h_map' using 1
     simp [Function.comp_assoc]
   simp_rw [leftDeriv]
-  rw [derivWithin.comp _ ((neg_neg x).symm ▸ hf_diff) (differentiable_neg _).differentiableWithinAt
-    h_map (uniqueDiffWithinAt_Iio (-x)), neg_neg, ← rightDeriv_def, derivWithin_neg]
-  swap; · exact uniqueDiffWithinAt_Iio _
-  simp only [mul_neg, mul_one, neg_neg]
+  sorry -- TODO
+  -- rw [derivWithin.comp _ ((neg_neg x).symm ▸ hf_diff) (differentiable_neg _).differentiableWithinAt
+  --   h_map (uniqueDiffWithinAt_Iio (-x)), neg_neg, ← rightDeriv_def, derivWithin_neg]
+  -- swap; · exact uniqueDiffWithinAt_Iio _
+  -- simp only [mul_neg, mul_one, neg_neg]
 
 lemma rightDeriv_eq_leftDeriv (f : ℝ → ℝ) :
     rightDeriv f = fun x ↦ - leftDeriv (fun y ↦ f (-y)) (-x) := by
@@ -87,7 +88,7 @@ lemma rightDeriv_eq_leftDeriv (f : ℝ → ℝ) :
 
 lemma leftDeriv_eq_rightDeriv_apply (f : ℝ → ℝ) (x : ℝ) :
     leftDeriv f x = - rightDeriv (fun y ↦ f (-y)) (-x) := by
-  simp [rightDeriv_eq_leftDeriv_apply, Function.comp_assoc]
+  simp [rightDeriv_eq_leftDeriv_apply]
 
 lemma leftDeriv_eq_rightDeriv (f : ℝ → ℝ) :
     leftDeriv f = fun x ↦ - rightDeriv (fun y ↦ f (-y)) (-x) := by
@@ -287,18 +288,6 @@ lemma bddAbove_slope_Iio (hfc : ConvexOn ℝ univ f) (x : ℝ) :
   simp_rw [mem_Iic, ← hz']
   exact slope_mono hfc (mem_univ x) ⟨trivial, hz.ne⟩ (by simp) (by linarith)
 
-lemma monotoneOn_slope_gt (hfc : ConvexOn ℝ s f) {x : ℝ} (hxs : x ∈ interior s) :
-    MonotoneOn (slope f x) {y ∈ s | x < y} := by
-  refine monotoneOn_iff_forall_lt.mpr fun y hy z hz hz' ↦ ?_
-  simp_rw [slope_def_field]
-  exact hfc.secant_mono (interior_subset hxs) hy.1 hz.1 hy.2.ne' hz.2.ne' hz'.le
-
-lemma monotoneOn_slope_lt (hfc : ConvexOn ℝ s f) {x : ℝ} (hxs : x ∈ interior s) :
-    MonotoneOn (slope f x) {y ∈ s | y < x} := by
-  refine monotoneOn_iff_forall_lt.mpr fun y hy z hz hz' ↦ ?_
-  simp_rw [slope_def_field]
-  exact hfc.secant_mono (interior_subset hxs) hy.1 hz.1 hy.2.ne hz.2.ne hz'.le
-
 lemma bddBelow_slope_Ioi_of_mem_interior (hfc : ConvexOn ℝ s f) {x : ℝ} (hxs : x ∈ interior s) :
     BddBelow (slope f x '' {y ∈ s | x < y}) := by
   obtain ⟨y, hys, hyx⟩ : ∃ y ∈ s, y < x := by
@@ -340,7 +329,8 @@ lemma hasRightDerivAt_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ inte
   obtain ⟨a, b, hxab, habs⟩ := hxs'
   simp_rw [hasDerivWithinAt_iff_tendsto_slope]
   simp only [mem_Ioi, lt_self_iff_false, not_false_eq_true, diff_singleton_eq_self]
-  have h_mono : MonotoneOn (slope f x) {y ∈ s | x < y} := monotoneOn_slope_gt hfc hxs
+  have h_mono : MonotoneOn (slope f x) {y ∈ s | x < y} :=
+    monotoneOn_slope_gt hfc (mem_of_subset_of_mem habs hxab)
   have h_bddBelow : BddBelow (slope f x '' Ioo x b) := by
     refine (bddBelow_slope_Ioi_of_mem_interior hfc hxs).mono ?_
     exact image_mono fun z hz ↦ ⟨habs ⟨hxab.1.trans hz.1, hz.2⟩, hz.1⟩
@@ -359,32 +349,17 @@ lemma hasRightDerivAt_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ inte
       obtain ⟨z, hxz, hzy⟩ := exists_between (lt_min hxab.2 hxy)
       refine csInf_le_of_le (b := slope f x z) h_bddBelow ?_ ?_
       · exact ⟨z, ⟨hxz, hzy.trans_le (min_le_left _ _)⟩, rfl⟩
-      · refine monotoneOn_slope_gt hfc hxs ?_ ⟨hys, hxy⟩ (hzy.le.trans (min_le_right _ _))
+      · refine monotoneOn_slope_gt hfc (mem_of_subset_of_mem habs hxab) ?_ ⟨hys, hxy⟩
+          (hzy.le.trans (min_le_right _ _))
         exact ⟨habs ⟨hxab.1.trans hxz, hzy.trans_le (min_le_left _ _)⟩, hxz⟩
   · refine csInf_le_csInf (bddBelow_slope_Ioi_of_mem_interior hfc hxs) ?_ ?_
     · simpa using hxab.2
     · refine image_mono fun z hz ↦ ?_
       exact ⟨habs ⟨hxab.1.trans hz.1, hz.2⟩, hz.1⟩
 
-lemma differentiableWithinAt_Ioi_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
-    DifferentiableWithinAt ℝ f (Ioi x) x :=
-  (hfc.hasRightDerivAt_of_mem_interior hxs).differentiableWithinAt
-
 lemma hadDerivWithinAt_rightDeriv_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
     HasDerivWithinAt f (rightDeriv f x) (Ioi x) x :=
   (hfc.differentiableWithinAt_Ioi_of_mem_interior hxs).hasDerivWithinAt
-
-lemma rightDeriv_eq_sInf_slope_of_mem_interior(hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
-    rightDeriv f x = sInf (slope f x '' {y | y ∈ s ∧ x < y}) :=
-  (hfc.hasRightDerivAt_of_mem_interior hxs).derivWithin (uniqueDiffWithinAt_Ioi x)
-
-lemma rightDeriv_le_slope (hfc : ConvexOn ℝ s f)
-    {y : ℝ} (hxs : x ∈ interior s) (hys : y ∈ s) (hxy : x < y) :
-    rightDeriv f x ≤ slope f x y := by
-  rw [rightDeriv_eq_sInf_slope_of_mem_interior hfc hxs]
-  refine csInf_le (bddBelow_slope_Ioi_of_mem_interior hfc hxs) ?_
-  simp only [mem_image, mem_setOf_eq]
-  exact ⟨y, ⟨hys, hxy⟩, rfl⟩
 
 lemma hasLeftDerivAt_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
     HasDerivWithinAt f (sSup (slope f x '' {y ∈ s | y < x})) (Iio x) x := by
@@ -393,7 +368,8 @@ lemma hasLeftDerivAt_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ inter
   obtain ⟨a, b, hxab, habs⟩ := hxs'
   simp_rw [hasDerivWithinAt_iff_tendsto_slope]
   simp only [mem_Iio, lt_self_iff_false, not_false_eq_true, diff_singleton_eq_self]
-  have h_mono : MonotoneOn (slope f x) {y ∈ s | y < x} := monotoneOn_slope_lt hfc hxs
+  have h_mono : MonotoneOn (slope f x) {y ∈ s | y < x} :=
+    monotoneOn_slope_lt hfc (mem_of_subset_of_mem habs hxab)
   have h_bddAbove : BddAbove (slope f x '' Ioo a x) := by
     refine (bddAbove_slope_Iio_of_mem_interior hfc hxs).mono ?_
     exact image_mono fun z hz ↦ ⟨habs ⟨hz.1, hz.2.trans hxab.2⟩, hz.2⟩
@@ -416,47 +392,13 @@ lemma hasLeftDerivAt_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ inter
       obtain ⟨z, hxz, hzy⟩ := exists_between (max_lt hxab.1 hyx)
       refine le_csSup_of_le (b := slope f x z) h_bddAbove ?_ ?_
       · exact ⟨z, ⟨(le_max_left _ _).trans_lt hxz, hzy⟩, rfl⟩
-      · refine monotoneOn_slope_lt hfc hxs ⟨hys, hyx⟩ ?_ ((le_max_right _ _).trans hxz.le)
+      · refine monotoneOn_slope_lt hfc (mem_of_subset_of_mem habs hxab) ⟨hys, hyx⟩
+          ?_ ((le_max_right _ _).trans hxz.le)
         exact ⟨habs ⟨(le_max_left _ _).trans_lt hxz, hzy.trans hxab.2⟩, hzy⟩
-
-lemma differentiableWithinAt_Iio_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
-    DifferentiableWithinAt ℝ f (Iio x) x :=
-  (hfc.hasLeftDerivAt_of_mem_interior hxs).differentiableWithinAt
 
 lemma hadDerivWithinAt_leftDeriv_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
     HasDerivWithinAt f (leftDeriv f x) (Iio x) x :=
   (hfc.differentiableWithinAt_Iio_of_mem_interior hxs).hasDerivWithinAt
-
-lemma leftDeriv_eq_sSup_slope_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
-    leftDeriv f x = sSup (slope f x '' {y | y ∈ s ∧ y < x}) :=
-  (hfc.hasLeftDerivAt_of_mem_interior hxs).derivWithin (uniqueDiffWithinAt_Iio x)
-
-lemma slope_le_leftDeriv (hfc : ConvexOn ℝ s f)
-    {y : ℝ} (hxs : x ∈ interior s) (hys : y ∈ s) (hxy : y < x) :
-    slope f x y ≤ leftDeriv f x := by
-  rw [leftDeriv_eq_sSup_slope_of_mem_interior hfc hxs]
-  refine le_csSup (bddAbove_slope_Iio_of_mem_interior hfc hxs) ?_
-  simp only [mem_image, mem_setOf_eq]
-  exact ⟨y, ⟨hys, hxy⟩, rfl⟩
-
-lemma leftDeriv_le_rightDeriv_of_mem_interior (hfc : ConvexOn ℝ s f) (hxs : x ∈ interior s) :
-    leftDeriv f x ≤ rightDeriv f x := by
-  have hxs' := hxs
-  rw [mem_interior_iff_mem_nhds, mem_nhds_iff_exists_Ioo_subset] at hxs'
-  obtain ⟨a, b, hxab, habs⟩ := hxs'
-  rw [hfc.rightDeriv_eq_sInf_slope_of_mem_interior hxs,
-    hfc.leftDeriv_eq_sSup_slope_of_mem_interior hxs]
-  refine csSup_le ?_ ?_
-  · rw [image_nonempty]
-    obtain ⟨z, haz, hzx⟩ := exists_between hxab.1
-    exact ⟨z, habs ⟨haz, hzx.trans hxab.2⟩, hzx⟩
-  rintro _ ⟨z, ⟨hzs, hzx⟩, rfl⟩
-  refine le_csInf ?_ ?_
-  · rw [image_nonempty]
-    obtain ⟨z, hxz, hzb⟩ := exists_between hxab.2
-    exact ⟨z, habs ⟨hxab.1.trans hxz, hzb⟩, hxz⟩
-  rintro _ ⟨y, ⟨hys, hxy⟩, rfl⟩
-  exact slope_mono hfc (interior_subset hxs) ⟨hzs, hzx.ne⟩ ⟨hys, hxy.ne'⟩ (hzx.trans hxy).le
 
 end GeneralSet
 

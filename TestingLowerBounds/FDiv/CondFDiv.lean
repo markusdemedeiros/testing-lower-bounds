@@ -163,8 +163,9 @@ lemma condFDiv_eq_add [IsFiniteMeasure μ] [IsFiniteKernel κ] [IsFiniteKernel �
     rw [← EReal.coe_ennreal_toReal, EReal.toReal_coe]
     exact measure_ne_top _ _
   simp only [EReal.coe_add, EReal.toReal_mul]
-  rw [integral_mul_left]
-  simp only [_root_.EReal.toReal_coe_ennreal, EReal.coe_mul]
+  rw [integral_const_mul]
+  simp only [_root_.EReal.toReal_coe_ennreal, EReal.coe_mul, EReal.coe_ennreal_toReal,
+    measure_ne_top]
 
 lemma condFDiv_of_derivAtTop_eq_top [IsFiniteMeasure μ]
     [IsFiniteKernel κ] [IsFiniteKernel η]
@@ -191,7 +192,7 @@ lemma condFDiv_zero_left [IsFiniteMeasure μ] [IsFiniteKernel η] :
   rw [condFDiv_eq' _ _] <;> simp_rw [Kernel.zero_apply, fDiv_zero_measure_left]
   · simp_rw [EReal.toReal_mul, EReal.toReal_coe, EReal.toReal_coe_ennreal]
     norm_cast
-    exact integral_mul_left (f 0) _
+    exact integral_const_mul (f 0) _
   · filter_upwards with _
     simp only [ne_eq, EReal.mul_eq_top, EReal.coe_ne_bot, false_and, EReal.coe_neg', and_false,
       EReal.coe_ennreal_ne_bot, EReal.coe_ne_top, EReal.coe_ennreal_pos, Measure.measure_univ_pos,

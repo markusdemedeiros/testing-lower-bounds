@@ -87,11 +87,12 @@ lemma kl_zero_right [NeZero μ] : kl μ 0 = ⊤ :=
   kl_of_not_ac (Measure.absolutelyContinuous_zero_iff.mp.mt (NeZero.ne _))
 
 lemma kl_eq_top_iff : kl μ ν = ⊤ ↔ μ ≪ ν → ¬ Integrable (llr μ ν) μ := by
-  constructor <;> intro h <;> push_neg at *
-  · contrapose! h
-    rw [kl_of_ac_of_integrable h.1 h.2]
-    exact EReal.coe_ne_top _
-  · rcases or_not_of_imp h with (h | h) <;> simp [h]
+  refine ⟨fun h hμν h_int ↦ ?_, fun h ↦ ?_⟩
+  · rw [kl_of_ac_of_integrable hμν h_int] at h
+    exact (EReal.coe_ne_top _) h
+  · by_cases hμν : μ ≪ ν
+    · exact kl_of_not_integrable (h hμν)
+    · exact kl_of_not_ac hμν
 
 lemma kl_ne_top_iff : kl μ ν ≠ ⊤ ↔ μ ≪ ν ∧ Integrable (llr μ ν) μ := by
   rw [ne_eq, kl_eq_top_iff]

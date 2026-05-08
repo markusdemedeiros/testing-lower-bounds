@@ -202,7 +202,7 @@ lemma renyiDiv_eq_bot_iff_of_one_lt (ha : 1 < a) [IsFiniteMeasure μ] [IsFiniteM
 
 lemma renyiDiv_ne_bot [hμ : NeZero μ] [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     renyiDiv a μ ν ≠ ⊥ := by
-  rcases le_or_lt a 1 with (ha | ha)
+  rcases le_or_gt a 1 with (ha | ha)
   · exact renyiDiv_ne_bot_of_le_one ha
   · exact (renyiDiv_eq_bot_iff_of_one_lt ha).mp.mt hμ.out
 
@@ -217,8 +217,8 @@ lemma renyiDiv_of_mutuallySingular (ha_nonneg : 0 ≤ a) [NeZero μ]
   by_cases ha : a < 1
   · rw [renyiDiv_eq_top_iff_mutuallySingular_of_lt_one ha_nonneg ha]
     exact hμν
-  · rw [renyiDiv_eq_top_iff_hellingerDiv_eq_top_of_one_le (le_of_not_lt ha)]
-    exact hellingerDiv_of_mutuallySingular_of_one_le (le_of_not_lt ha) hμν
+  · rw [renyiDiv_eq_top_iff_hellingerDiv_eq_top_of_one_le (le_of_not_gt ha)]
+    exact hellingerDiv_of_mutuallySingular_of_one_le (le_of_not_gt ha) hμν
 
 lemma renyiDiv_of_one_lt_of_not_integrable (ha : 1 < a) [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     (h_int : ¬ Integrable (fun x ↦ ((∂μ/∂ν) x).toReal ^ a) ν) :
@@ -400,20 +400,16 @@ lemma le_renyiDiv_of_le_hellingerDiv {a : ℝ} {μ₁ ν₁ : Measure α} {μ₂
   · simp_rw [renyiDiv_of_ne_one ha.ne, h_eq]
     apply EReal.neg_le_neg_iff.mp
     simp_rw [← neg_mul, ← EReal.coe_neg, neg_inv, neg_sub]
-    gcongr
-    · simp only [EReal.coe_nonneg, inv_nonneg, sub_nonneg, ha.le]
+    refine mul_le_mul_of_nonneg_left ?_ (by simp [ha.le])
     refine ENNReal.log_monotone <| EReal.toENNReal_le_toENNReal ?_
     gcongr (ν₂ .univ) + ?_
     apply EReal.neg_le_neg_iff.mp
     norm_cast
     simp_rw [← neg_mul, ← EReal.coe_neg, neg_sub]
-    gcongr
-    norm_cast
-    linarith
+    gcongr <;> linarith
   · simp_all
   · simp_rw [renyiDiv_of_ne_one ha.ne', h_eq]
-    gcongr
-    · simp only [EReal.coe_nonneg, inv_nonneg, sub_nonneg, ha.le]
+    refine mul_le_mul_of_nonneg_left ?_ (by simp [ha.le])
     refine ENNReal.log_monotone <| EReal.toENNReal_le_toENNReal ?_
     gcongr
     norm_cast
