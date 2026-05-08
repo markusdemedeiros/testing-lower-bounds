@@ -3,7 +3,8 @@ Copyright (c) 2024 Rémy Degenne. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
-import Mathlib.MeasureTheory.Decomposition.RadonNikodym
+import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
+import Mathlib.MeasureTheory.Measure.Decomposition.IntegralRNDeriv
 import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 
 /-!
@@ -21,7 +22,7 @@ variable {α β : Type*} {m mα : MeasurableSpace α} {mβ : MeasurableSpace β}
 lemma withDensity_mono_measure (h : μ ≤ ν) {f : α → ℝ≥0∞} : μ.withDensity f ≤ ν.withDensity f := by
   refine Measure.le_intro fun s hs _ ↦ ?_
   rw [withDensity_apply _ hs, withDensity_apply _ hs]
-  exact lintegral_mono_fn' (fun _ ↦ le_rfl) (Measure.restrict_mono subset_rfl h)
+  exact lintegral_mono_fn' (Measure.restrict_mono subset_rfl h) (fun _ ↦ le_rfl)
 
 lemma rnDeriv_add_self_right (ν μ : Measure α) [SigmaFinite μ] [SigmaFinite ν] :
     ν.rnDeriv (μ + ν) =ᵐ[ν] fun x ↦ (μ.rnDeriv ν x + 1)⁻¹ := by
@@ -95,7 +96,7 @@ lemma rnDeriv_eq_div' {ξ : Measure α} [SigmaFinite μ] [SigmaFinite ν] [Sigma
 lemma rnDeriv_eq_zero_ae_of_zero_measure (ν : Measure α) {s : Set α} (hs : MeasurableSet s)
     (hμ : μ s = 0) : ∀ᵐ x ∂ν, x ∈ s → (μ.rnDeriv ν) x = 0 := by
   rw [← setLIntegral_eq_zero_iff hs (μ.measurable_rnDeriv ν)]
-  exact le_antisymm (hμ ▸ Measure.setLIntegral_rnDeriv_le s) (zero_le _)
+  exact le_antisymm (hμ ▸ Measure.setLIntegral_rnDeriv_le s) bot_le
 
 /--Singular part set of μ with respect to ν.-/
 def singularPartSet (μ ν : Measure α) := {x | ν.rnDeriv (μ + ν) x = 0}
@@ -110,7 +111,7 @@ lemma measure_singularPartSet (μ ν : Measure α) [SigmaFinite μ] [SigmaFinite
   have hν_ac : ν ≪ μ + ν := by rw [add_comm]; exact rfl.absolutelyContinuous.add_right _
   have h1 : ∫⁻ x in s, ν.rnDeriv (μ + ν) x ∂(μ + ν) = 0 := by
     calc ∫⁻ x in s, ν.rnDeriv (μ + ν) x ∂(μ + ν)
-      = ∫⁻ _ in s, 0 ∂(μ + ν) := setLIntegral_congr_fun hs (ae_of_all _ (fun _ hx ↦ hx))
+      = ∫⁻ _ in s, 0 ∂(μ + ν) := setLIntegral_congr_fun hs (fun _ hx ↦ hx)
     _ = 0 := lintegral_zero
   have h2 : ∫⁻ x in s, ν.rnDeriv (μ + ν) x ∂(μ + ν) = ν s :=
     Measure.setLIntegral_rnDeriv hν_ac _
@@ -127,7 +128,7 @@ lemma measure_inter_compl_singularPartSet' (μ ν : Measure α) [SigmaFinite μ]
     have : ∫⁻ x in t ∩ sᶜ,
           ν.rnDeriv (μ + ν) x * (μ.rnDeriv (μ + ν) x / ν.rnDeriv (μ + ν) x) ∂(μ + ν)
         = ∫⁻ x in t ∩ sᶜ, μ.rnDeriv (μ + ν) x ∂(μ + ν) := by
-      refine setLIntegral_congr_fun (ht.inter hs.compl) ?_
+      refine setLIntegral_congr_fun_ae (ht.inter hs.compl) ?_
       filter_upwards [ν.rnDeriv_lt_top (μ + ν)] with x hx_top hx
       rw [div_eq_mul_inv, mul_comm, mul_assoc, ENNReal.inv_mul_cancel, mul_one]
       · simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq, s] at hx
@@ -136,7 +137,7 @@ lemma measure_inter_compl_singularPartSet' (μ ν : Measure α) [SigmaFinite μ]
     rw [this, Measure.setLIntegral_rnDeriv (rfl.absolutelyContinuous.add_right _)]
   rw [this, setLIntegral_rnDeriv_mul hν_ac _ (ht.inter hs.compl)]
   swap; · exact ((μ.measurable_rnDeriv _).div (ν.measurable_rnDeriv _)).aemeasurable
-  refine setLIntegral_congr_fun (ht.inter hs.compl) ?_
+  refine setLIntegral_congr_fun_ae (ht.inter hs.compl) ?_
   filter_upwards [μ.rnDeriv_eq_div ν] with x hx
   exact hx ▸ fun _ ↦ rfl
 
@@ -193,7 +194,7 @@ lemma toReal_rnDeriv_map [IsFiniteMeasure μ] [SigmaFinite ν] (hμν : μ ≪ �
     {g : α → β} (hg : Measurable g) [SigmaFinite (ν.trim hg.comap_le)] [SigmaFinite (ν.map g)] :
     (fun a ↦ ((μ.map g).rnDeriv (ν.map g) (g a)).toReal)
       =ᵐ[ν] ν[(fun a ↦ (μ.rnDeriv ν a).toReal) | mβ.comap g] := by
-  refine ae_eq_condexp_of_forall_setIntegral_eq _ ?_ ?_ ?_ ?_
+  refine ae_eq_condExp_of_forall_setIntegral_eq _ ?_ ?_ ?_ ?_
   · exact Measure.integrable_toReal_rnDeriv
   · rintro _ ⟨t, _, rfl⟩ _
     refine Integrable.integrableOn ?_
@@ -218,15 +219,15 @@ lemma toReal_rnDeriv_map' [IsFiniteMeasure μ] [SigmaFinite ν] (hμν : μ ≪ 
     {g : α → β} (hg : Measurable g) [SigmaFinite (ν.trim hg.comap_le)] [SigmaFinite (ν.map g)] :
     (fun a ↦ ((μ.map g).rnDeriv (ν.map g) (g a)).toReal)
       =ᵐ[ν.trim hg.comap_le] ν[(fun a ↦ (μ.rnDeriv ν a).toReal) | mβ.comap g] := by
-  rw [ae_eq_trim_iff]
-  · exact toReal_rnDeriv_map hμν hg
-  · refine Measurable.stronglyMeasurable ?_
+  have hsm : StronglyMeasurable[mβ.comap g] (fun a ↦ ((μ.map g).rnDeriv (ν.map g) (g a)).toReal) := by
+    refine Measurable.stronglyMeasurable ?_
     rintro s hs
     refine ⟨(fun a ↦ ((map g μ).rnDeriv (map g ν) a).toReal) ⁻¹' s, ?_, ?_⟩
     · exact (Measure.measurable_rnDeriv _ _).ennreal_toReal hs
     · rw [← preimage_comp]
       rfl
-  · exact stronglyMeasurable_condexp
+  rw [hsm.ae_eq_trim_iff hg.comap_le stronglyMeasurable_condExp]
+  exact toReal_rnDeriv_map hμν hg
 
 lemma trim_eq_map (μ : Measure α) (hm : m ≤ mα) : μ.trim hm = @Measure.map _ _ m _ id μ := by
   refine @Measure.ext α m _ _ (fun s hs ↦ ?_)
@@ -304,7 +305,7 @@ lemma ae_integrable_mul_rnDeriv_of_ae_integrable {κ : α → Measure β} [Sigma
   filter_upwards [h] with a ha
   by_cases h_zero : μ.rnDeriv ν a = 0
   · rw [h_zero]
-    simp only [ENNReal.zero_toReal, zero_mul, integrable_zero]
+    simp only [ENNReal.toReal_zero, zero_mul, integrable_zero]
   · apply Integrable.const_mul
     exact ha h_zero
 

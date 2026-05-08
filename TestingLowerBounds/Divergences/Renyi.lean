@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import TestingLowerBounds.Divergences.Hellinger
-import Mathlib.Probability.Moments
+import Mathlib.Probability.Moments.Basic
 import Mathlib.Data.Real.Sign
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 

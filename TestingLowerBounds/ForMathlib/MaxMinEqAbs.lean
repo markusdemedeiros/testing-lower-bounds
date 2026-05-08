@@ -1,15 +1,21 @@
-import Mathlib.Algebra.Order.Field.Defs
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Algebra.Order.Ring.Defs
 import Mathlib.Algebra.Order.Group.Unbundled.Abs
 import Mathlib.Tactic.Ring.RingNF
 
 --PR this to mathlib
---the hp LinearOrderedField may not be optimal
-variable {α : Type*} [LinearOrderedField α]
+variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α]
 
 lemma max_eq_add_add_abs_sub (a b : α) : max a b = 2⁻¹  * (a + b + |a - b|) := by
-  rw [← max_add_min a, ← max_sub_min_eq_abs', add_sub_left_comm, add_sub_cancel_right]
-  ring
+  rcases le_total a b with h | h
+  · rw [max_eq_right h, abs_of_nonpos (sub_nonpos.mpr h)]
+    ring
+  · rw [max_eq_left h, abs_of_nonneg (sub_nonneg.mpr h)]
+    ring
 
 lemma min_eq_add_sub_abs_sub (a b : α) : min a b = 2⁻¹ * (a + b - |a - b|) := by
-  rw [← min_add_max a, ← max_sub_min_eq_abs', add_sub_assoc, sub_sub_cancel]
-  ring
+  rcases le_total a b with h | h
+  · rw [min_eq_left h, abs_of_nonpos (sub_nonpos.mpr h)]
+    ring
+  · rw [min_eq_right h, abs_of_nonneg (sub_nonneg.mpr h)]
+    ring

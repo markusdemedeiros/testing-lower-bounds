@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne
 -/
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
-import Mathlib.MeasureTheory.Decomposition.RadonNikodym
+import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
 
 /-!
 

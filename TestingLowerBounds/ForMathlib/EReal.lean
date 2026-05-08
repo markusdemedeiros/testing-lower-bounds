@@ -331,7 +331,7 @@ theorem measurable_from_prod_countable'' [Countable β] [MeasurableSingletonClas
     {f : β × α → γ} (hf : ∀ y, Measurable fun x => f (y, x)) :
     Measurable f := by
   change Measurable ((fun (p : α × β) ↦ f (p.2, p.1)) ∘ Prod.swap)
-  exact (measurable_from_prod_countable hf).comp measurable_swap
+  exact (measurable_from_prod_countable_left hf).comp measurable_swap
 
 theorem measurable_of_measurable_real_prod {f : EReal × β → γ}
     (h_real : Measurable fun p : ℝ × β ↦ f (p.1, p.2))
@@ -563,9 +563,9 @@ lemma toEReal_sub (hy_top : y ≠ ⊤) (h_le : y ≤ x) :
 
 --PR these 2 lemmas to mathlib, just after ENNReal.mul_max
 -- #check ENNReal.mul_max
-theorem min_mul : min a b * c = min (a * c) (b * c) := mul_right_mono.map_min
+theorem min_mul : min a b * c = min (a * c) (b * c) := mul_left_mono.map_min
 
-theorem mul_min : a * min b c = min (a * b) (a * c) := mul_left_mono.map_min
+theorem mul_min : a * min b c = min (a * b) (a * c) := mul_right_mono.map_min
 
 @[simp]
 lemma toReal_toEReal_of_ne_top (hx : x ≠ ⊤) : x.toReal.toEReal = x.toEReal := by

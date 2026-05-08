@@ -183,7 +183,7 @@ lemma absolutelyContinuous_compProd_iff
 lemma absolutelyContinuous_compProd_right_iff
     {μ : Measure α} {κ η : Kernel α γ} [SFinite μ] [IsFiniteKernel κ] [IsFiniteKernel η] :
     μ ⊗ₘ κ ≪ μ ⊗ₘ η ↔ ∀ᵐ a ∂μ, κ a ≪ η a :=
-  ⟨absolutelyContinuous_kernel_of_compProd, fun h ↦ absolutelyContinuous_compProd_right h⟩
+  ⟨absolutelyContinuous_kernel_of_compProd, fun h ↦ AbsolutelyContinuous.compProd_right h⟩
 
 end MeasureCompProd
 

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
-import Mathlib.MeasureTheory.Integral.FundThmCalculus
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import TestingLowerBounds.Sorry.ByParts
 import TestingLowerBounds.ForMathlib.LeftRightDeriv
 

@@ -58,7 +58,7 @@ lemma discard_apply (a : α) : discard α a = Measure.dirac () := deterministic_
 @[simp]
 lemma _root_.MeasureTheory.Measure.comp_discard (μ : Measure α) :
     μ.bind (discard α) = μ .univ • (Measure.dirac ()) := by
-  ext s hs; simp [Measure.bind_apply hs (Kernel.measurable _), mul_comm]
+  ext s hs; simp [Measure.bind_apply hs (Kernel.measurable _).aemeasurable, mul_comm]
 
 end Discard
 

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
-import Mathlib.MeasureTheory.Constructions.Prod.Integral
+import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Order.CompletePartialOrder
 import TestingLowerBounds.CurvatureMeasure
 import TestingLowerBounds.Divergences.StatInfo.StatInfo
