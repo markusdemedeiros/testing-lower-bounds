@@ -250,7 +250,7 @@ lemma toReal_statInfo_eq_integral_max_of_le [IsFiniteMeasure μ] [IsFiniteMeasur
           (μ.measurable_rnDeriv ν).aemeasurable] with x hx1 hx2 hx3
         intro hxs
         nth_rw 1 [← μ.singularPart_add_rnDeriv ν]
-        simp_rw [hx2, Pi.add_apply, hx3, hx1 hxs, mul_zero, ENNReal.zero_toReal, sub_zero, add_zero]
+        simp_rw [hx2, Pi.add_apply, hx3, hx1 hxs, mul_zero, ENNReal.toReal_zero, sub_zero, add_zero]
       · apply setIntegral_congr_ae hs.compl
         filter_upwards [μ.rnDeriv_restrict (twoHypKernel μ ν ∘ₘ π) hs.compl,
           Measure.rnDeriv_mul_rnDeriv
@@ -271,7 +271,7 @@ lemma toReal_statInfo_eq_integral_max_of_le [IsFiniteMeasure μ] [IsFiniteMeasur
         filter_upwards [μ.rnDeriv_restrict _ hs] with x hx
         intro hxs
         rw [← Measure.restrict_singularPartSet_eq_singularPart, hx, indicator_of_not_mem hxs,
-          mul_zero, ENNReal.zero_toReal, max_self]
+          mul_zero, ENNReal.toReal_zero, max_self]
       · simp_rw [mul_comm _ ((∂ν/∂_ ∘ₘ _) _).toReal, ← smul_eq_mul]
         rw [setIntegral_rnDeriv_smul hνac hs.compl]
     _ = ∫ x, (π {false} * (∂(μ.singularPart ν)/∂twoHypKernel μ ν ∘ₘ π) x).toReal
@@ -376,7 +376,7 @@ lemma toReal_statInfo_eq_integral_max_of_ge [IsFiniteMeasure μ] [IsFiniteMeasur
           Measure.rnDeriv_withDensity_left_of_absolutelyContinuous hνac
           (μ.measurable_rnDeriv ν).aemeasurable] with x hx1 hx2 hx3 hxs
         nth_rw 2 [← μ.singularPart_add_rnDeriv ν]
-        simp_rw [hx2, Pi.add_apply, hx3, hx1 hxs, mul_zero, ENNReal.zero_toReal, zero_sub, add_zero]
+        simp_rw [hx2, Pi.add_apply, hx3, hx1 hxs, mul_zero, ENNReal.toReal_zero, zero_sub, add_zero]
       · apply setIntegral_congr_ae hs.compl
         filter_upwards [μ.rnDeriv_restrict (twoHypKernel μ ν ∘ₘ π) hs.compl,
           Measure.rnDeriv_mul_rnDeriv

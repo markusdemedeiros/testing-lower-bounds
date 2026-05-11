@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne
 -/
 import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
+import Mathlib.MeasureTheory.Measure.Decomposition.IntegralRNDeriv
 
 /-!
 
@@ -86,7 +87,7 @@ lemma measure_sub_le_measure_mul_exp [SigmaFinite μ] [IsFiniteMeasure ν] (hμ�
     (s : Set α) (c : ℝ) (hμc : μ {x | c < llr μ ν x} ≠ ∞) :
     (μ s).toReal - (μ {x | c < llr μ ν x}).toReal ≤ (ν s).toReal * exp c := by
   by_cases hμs : μ s = ∞
-  · simp only [hμs, ENNReal.top_toReal, gt_iff_lt, zero_sub]
+  · simp only [hμs, ENNReal.toReal_top, gt_iff_lt, zero_sub]
     calc - (μ {x | c < llr μ ν x}).toReal
       ≤ 0 := by simp
     _ ≤ (ν s).toReal * exp c := by positivity
@@ -149,7 +150,7 @@ lemma one_sub_le_add_measure_mul_exp [IsFiniteMeasure ν] [IsFiniteMeasure ν']
       - (μ {x | c' < llr μ ν' x}).toReal := by
         rw [← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _)]
         gcongr
-        rw [← ENNReal.one_toReal, ← measure_univ (μ := μ), ENNReal.toReal_le_toReal]
+        rw [← ENNReal.toReal_one, ← measure_univ (μ := μ), ENNReal.toReal_le_toReal]
         · exact measure_univ_le_add_compl s
         · exact measure_ne_top _ _
         · simp only [ne_eq, ENNReal.add_eq_top, measure_ne_top μ, or_self, not_false_eq_true]

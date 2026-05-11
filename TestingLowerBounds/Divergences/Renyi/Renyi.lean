@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import TestingLowerBounds.Divergences.Hellinger.Hellinger
-import Mathlib.Probability.Moments
+import Mathlib.Probability.Moments.Basic
 import Mathlib.Data.Real.Sign
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
@@ -138,7 +138,7 @@ lemma avgMass_add_mul_hellingerDiv_nonneg'_of_lt_one (ha_pos : 0 < a) (ha_lt : a
     [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     0 ≤ avgMass a μ ν + (a - 1) * (hellingerDiv a μ ν).toReal := by
   by_cases h_top : hellingerDiv a μ ν = ∞
-  · simp only [h_top, ENNReal.top_toReal, mul_zero, add_zero, ge_iff_le]
+  · simp only [h_top, ENNReal.toReal_top, mul_zero, add_zero, ge_iff_le]
     exact avgMass_nonneg_of_lt_one ha_pos.le ha_lt.le
   · exact avgMass_add_mul_hellingerDiv_nonneg' ha_pos h_top
 
@@ -294,7 +294,7 @@ lemma renyiDiv_zero_measure_left (ha_nonneg : 0 ≤ a) (ν : Measure α) [IsFini
   rw [renyiDiv_of_ne_one ha_zero ha]
   simp only [EReal.coe_add, EReal.coe_mul, EReal.coe_sub, EReal.coe_one, ne_eq, measure_ne_top,
     not_false_eq_true, ENNReal.toReal_toEReal_of_ne_top, Measure.coe_zero, Pi.zero_apply,
-    ENNReal.zero_toReal, mul_zero, EReal.coe_zero, add_zero,
+    ENNReal.toReal_zero, mul_zero, EReal.coe_zero, add_zero,
     hellingerDiv_zero_measure_left (ha_nonneg.lt_of_ne' ha_zero)]
   have : (1 - (a : EReal)) * (ν Set.univ) + (a - 1) * (ν Set.univ) = 0 := by
     rw [← EReal.coe_ennreal_toReal (measure_ne_top _ _)]
@@ -321,7 +321,7 @@ lemma renyiDiv_zero_measure_right (ha_nonneg : 0 ≤ a)
   have ha_pos : 0 < a := ha_nonneg.lt_of_ne' ha_zero
   rcases lt_trichotomy a 1 with (ha | rfl | ha)
   · rw [renyiDiv_of_ne_one ha_zero ha.ne, hellingerDiv_zero_measure_right_of_lt_one ha_pos ha]
-    simp only [EReal.coe_add, Measure.coe_zero, Pi.zero_apply, ENNReal.zero_toReal, mul_zero,
+    simp only [EReal.coe_add, Measure.coe_zero, Pi.zero_apply, ENNReal.toReal_zero, mul_zero,
       EReal.coe_zero, EReal.coe_mul, zero_add, EReal.coe_ennreal_mul, EReal.coe_ennreal_ofReal,
       EReal.toENNReal_eq_top_iff]
     have : (a : EReal) * (μ Set.univ).toReal + (a - 1) * ((max (a * (1 - a)⁻¹) 0) * (μ Set.univ))
@@ -343,7 +343,7 @@ lemma renyiDiv_zero_measure_right (ha_nonneg : 0 ≤ a)
     exact EReal.coe_ne_top _
   · simp only [renyiDiv_one, kl_zero_right, EReal.coe_ennreal_top, ne_eq, EReal.coe_ne_bot,
       not_false_eq_true, EReal.top_add_of_ne_bot, Measure.coe_zero, Pi.zero_apply,
-      ENNReal.zero_toReal, EReal.coe_zero, sub_zero, div_zero, log_zero, EReal.toENNReal_eq_top_iff]
+      ENNReal.toReal_zero, EReal.coe_zero, sub_zero, div_zero, log_zero, EReal.toENNReal_eq_top_iff]
     rw [EReal.mul_eq_top]
     simp only [not_top_lt, and_false, top_ne_bot, EReal.zero_lt_top, and_true, false_or]
     right
@@ -352,7 +352,7 @@ lemma renyiDiv_zero_measure_right (ha_nonneg : 0 ≤ a)
     rw [inv_pos, ENNReal.toReal_pos_iff]
     simp [NeZero.ne μ]
   · rw [renyiDiv_of_ne_one ha_zero ha.ne', hellingerDiv_zero_measure_right_of_one_le ha.le]
-    simp only [EReal.coe_add, Measure.coe_zero, Pi.zero_apply, ENNReal.zero_toReal, mul_zero,
+    simp only [EReal.coe_add, Measure.coe_zero, Pi.zero_apply, ENNReal.toReal_zero, mul_zero,
       EReal.coe_zero, EReal.coe_mul, zero_add, EReal.coe_ennreal_top, EReal.toENNReal_eq_top_iff]
     have : ((a : EReal) - 1) * ⊤ = ⊤ := by
       norm_cast

@@ -1,4 +1,4 @@
-import Mathlib.MeasureTheory.Integral.IntervalIntegral
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 /-!
 Here there is the statement of a version of the integration by parts theorem for the Riemann-Stieltjes integral.

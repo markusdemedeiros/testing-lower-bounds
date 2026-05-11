@@ -105,7 +105,7 @@ lemma bayesianRisk_comap_measurableEquiv (E : estimationProblem Θ 𝒴 𝒵) (P
     · simp
   · refine Measurable.lintegral_kernel_prod_right ?_
     refine E.ℓ_meas.comp ?_
-    exact (E.y_meas.comp (e.symm.measurable.comp measurable_fst)).prod_mk measurable_snd
+    exact (E.y_meas.comp (e.symm.measurable.comp measurable_fst)).prodMk measurable_snd
 
 /-- The Bayes risk of an estimation problem `E` with respect to a prior `π`, defined as the infimum
 of the Bayesian risks of all estimators. -/

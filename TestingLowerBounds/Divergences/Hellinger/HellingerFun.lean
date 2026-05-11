@@ -77,7 +77,7 @@ lemma integral_rpow_rnDeriv (ha_pos : 0 < a) (ha : a ≠ 1) [SigmaFinite μ] [Si
         by_cases hp : p x = 0
         · simp [hp, ha_pos.ne']
         by_cases hq : q x = 0
-        · simp only [hq, ENNReal.zero_toReal, Pi.div_apply, zero_mul, ENNReal.zero_div,
+        · simp only [hq, ENNReal.toReal_zero, Pi.div_apply, zero_mul, ENNReal.zero_div,
             zero_eq_mul, le_refl]
           refine Or.inr ?_
           rw [zero_rpow]
@@ -113,7 +113,7 @@ lemma integrable_rpow_rnDeriv_iff [SigmaFinite ν] [SigmaFinite μ] (hμν : μ 
   filter_upwards [μ.rnDeriv_ne_top ν] with x hx
   simp only [smul_eq_mul]
   by_cases h_zero : μ.rnDeriv ν x = 0
-  · simp only [h_zero, ENNReal.zero_toReal, zero_mul]
+  · simp only [h_zero, ENNReal.toReal_zero, zero_mul]
     rw [zero_rpow]
     linarith
   · rw [rpow_add (ENNReal.toReal_pos h_zero hx), rpow_one]

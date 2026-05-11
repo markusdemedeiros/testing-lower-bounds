@@ -463,7 +463,7 @@ lemma condHellingerDiv_of_not_ae_finite [CountableOrCountablyGenerated α β]
 --     condHellingerDiv a κ η μ = (a - 1)⁻¹ * ∫ x, ∫ b, ((∂κ x/∂η x) b).toReal ^ a ∂η x ∂μ
 --       - (a - 1)⁻¹ * (μ .univ).toReal := by
 --   simp_rw [condHellingerDiv_eq_integral'_of_one_lt ha h_int h_ac h_int',
---     compProd_univ_toReal, measure_univ, ENNReal.one_toReal, integral_const, smul_eq_mul, mul_one]
+--     compProd_univ_toReal, measure_univ, ENNReal.toReal_one, integral_const, smul_eq_mul, mul_one]
 
 -- lemma condHellingerDiv_eq_integral'_of_one_lt'' (ha : 1 < a)
 --     [IsProbabilityMeasure μ] [IsFiniteKernel κ] [IsMarkovKernel η]
@@ -473,7 +473,7 @@ lemma condHellingerDiv_of_not_ae_finite [CountableOrCountablyGenerated α β]
 --     condHellingerDiv a κ η μ = (a - 1)⁻¹ * ∫ x, ∫ b, ((∂κ x/∂η x) b).toReal ^ a ∂η x ∂μ
 --       - (a - 1)⁻¹ := by
 --   rw [condHellingerDiv_eq_integral'_of_one_lt' ha h_int h_ac h_int', measure_univ,
---     ENNReal.one_toReal, EReal.coe_one, mul_one]
+--     ENNReal.toReal_one, EReal.coe_one, mul_one]
 
 -- lemma condHellingerDiv_eq_integral'_of_lt_one (ha_pos : 0 < a) (ha : a < 1)
 --     [IsFiniteMeasure μ] [IsFiniteKernel κ] [IsFiniteKernel η]
@@ -514,7 +514,7 @@ lemma condHellingerDiv_of_not_ae_finite [CountableOrCountablyGenerated α β]
 --     condHellingerDiv a κ η μ = (a - 1)⁻¹ * ∫ x, ∫ b, ((∂κ x/∂η x) b).toReal ^ a ∂η x ∂μ
 --       - (a - 1)⁻¹ * (μ .univ).toReal := by
 --   simp_rw [condHellingerDiv_eq_integral'_of_lt_one ha_pos ha h_int', compProd_univ_toReal,
---     measure_univ, ENNReal.one_toReal, integral_const, smul_eq_mul, mul_one]
+--     measure_univ, ENNReal.toReal_one, integral_const, smul_eq_mul, mul_one]
 
 -- lemma condHellingerDiv_eq_integral'_of_lt_one'' (ha_pos : 0 < a) (ha : a < 1)
 --     [IsProbabilityMeasure μ] [IsFiniteKernel κ] [IsMarkovKernel η]
@@ -522,7 +522,7 @@ lemma condHellingerDiv_of_not_ae_finite [CountableOrCountablyGenerated α β]
 --     condHellingerDiv a κ η μ = (a - 1)⁻¹ * ∫ x, ∫ b, ((∂κ x/∂η x) b).toReal ^ a ∂η x ∂μ
 --       - (a - 1)⁻¹ := by
 --   rw [condHellingerDiv_eq_integral'_of_lt_one' ha_pos ha h_int', measure_univ,
---     ENNReal.one_toReal, EReal.coe_one, mul_one]
+--     ENNReal.toReal_one, EReal.coe_one, mul_one]
 
 end CondHellingerEq
 

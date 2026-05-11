@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
-import Mathlib.MeasureTheory.Constructions.Prod.Integral
+import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Order.CompletePartialOrder
 import TestingLowerBounds.CurvatureMeasure
 import TestingLowerBounds.Divergences.StatInfo.StatInfo
@@ -33,7 +33,7 @@ def statInfoDivFun (β γ : ℝ) : DivFunction :=
 lemma measurable_statInfoDivFun :
     Measurable (Function.uncurry fun (a : ℝ × ℝ) x ↦ statInfoDivFun a.1 a.2 ((∂μ/∂ν) x)) := by
   have h_meas := stronglyMeasurable_statInfoFun.measurable.comp
-    (f := fun ((a, b), x) ↦ ((a, b), ((∂μ/∂ν) x).toReal)) (measurable_fst.prod_mk (by fun_prop))
+    (f := fun ((a, b), x) ↦ ((a, b), ((∂μ/∂ν) x).toReal)) (measurable_fst.prodMk (by fun_prop))
   unfold statInfoDivFun
   -- convert h_meas
   sorry

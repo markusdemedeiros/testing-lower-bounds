@@ -135,7 +135,7 @@ lemma f_rnDeriv_le_add'' [CountableOrCountablyGenerated α β]
       congr
       norm_cast
       unfold_let κ'
-      rw [sub_eq_iff_eq_add, ← ENNReal.one_toReal, ← measure_univ (μ := κ a)]
+      rw [sub_eq_iff_eq_add, ← ENNReal.toReal_one, ← measure_univ (μ := κ a)]
       conv_lhs => rw [← κ.rnDeriv_add_singularPart η, add_comm]
       simp only [Kernel.coe_add, Pi.add_apply, Measure.coe_add]
       rw [ENNReal.toReal_add]

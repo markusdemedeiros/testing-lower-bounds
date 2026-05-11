@@ -5,7 +5,7 @@ Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import Mathlib.Analysis.Convex.Continuous
 import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.MeasureTheory.Decomposition.RadonNikodym
+import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
 import TestingLowerBounds.ForMathlib.LeftRightDeriv
 import TestingLowerBounds.Convex
 import TestingLowerBounds.DerivAtTop

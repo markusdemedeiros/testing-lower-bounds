@@ -5,7 +5,7 @@ Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
-import Mathlib.MeasureTheory.Integral.FundThmCalculus
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import TestingLowerBounds.Sorry.ByParts
 import TestingLowerBounds.ForMathlib.LeftRightDeriv
 import TestingLowerBounds.FDiv.DivFunction.RightDeriv
@@ -50,7 +50,7 @@ variable {𝒳 : Type*} {m𝒳 : MeasurableSpace 𝒳} {μ ν : Measure 𝒳} {f
 --   rw [if_neg hx0, if_neg hx1]
 --   have hx_ne0 : (x : ℝ) ≠ 0 := fun h ↦ hx0 (by ext; simp only [Icc.coe_zero, Icc.coe_eq_zero, h])
 --   have hx_ne1 : (x : ℝ) ≠ 1 := fun h ↦ hx1 (by ext; simp only [Icc.coe_one, Icc.coe_eq_one, h])
---   rw [ENNReal.toReal_add, ENNReal.one_toReal, ENNReal.toReal_inv, ENNReal.toReal_ofReal]
+--   rw [ENNReal.toReal_add, ENNReal.toReal_one, ENNReal.toReal_inv, ENNReal.toReal_ofReal]
 --   · simp
 --   · simp only [inv_nonneg, sub_nonneg]
 --     rw [one_le_inv₀ (lt_of_le_of_ne x.2.1 hx_ne0.symm)]

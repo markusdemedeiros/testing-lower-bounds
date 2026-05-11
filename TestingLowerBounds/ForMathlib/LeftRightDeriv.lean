@@ -15,7 +15,7 @@ variable {f : ℝ → ℝ} {x : ℝ}
 
 namespace ConvexOn
 
-lemma comp_neg {𝕜 F β : Type*} [LinearOrderedField 𝕜] [AddCommGroup F]
+lemma comp_neg {𝕜 F β : Type*} [Field 𝕜] [LinearOrder 𝕜] [AddCommGroup F]
     [OrderedAddCommMonoid β] [Module 𝕜 F] [SMul 𝕜 β] {f : F → β} {s : Set F}
     (hf : ConvexOn 𝕜 s f) :
     ConvexOn 𝕜 (-s) (fun x ↦ f (-x)) := by
@@ -23,7 +23,7 @@ lemma comp_neg {𝕜 F β : Type*} [LinearOrderedField 𝕜] [AddCommGroup F]
   simp_rw [neg_add_rev, ← smul_neg, add_comm]
   exact hf.2 hx hy ha hb hab
 
-lemma comp_neg_iff {𝕜 F β : Type*} [LinearOrderedField 𝕜] [AddCommGroup F]
+lemma comp_neg_iff {𝕜 F β : Type*} [Field 𝕜] [LinearOrder 𝕜] [AddCommGroup F]
     [OrderedAddCommMonoid β] [Module 𝕜 F] [SMul 𝕜 β] {f : F → β} {s : Set F}  :
     ConvexOn 𝕜 (-s) (fun x ↦ f (-x)) ↔ ConvexOn 𝕜 s f := by
   refine ⟨fun h ↦ ?_, fun h ↦ ConvexOn.comp_neg h⟩
@@ -99,7 +99,7 @@ lemma Filter.EventuallyEq.derivWithin_eq_nhds {𝕜 F : Type*} [NontriviallyNorm
     (h : f₁ =ᶠ[𝓝 x] f) :
     derivWithin f₁ s x = derivWithin f s x := by
   simp_rw [derivWithin]
-  rw [Filter.EventuallyEq.fderivWithin_eq_nhds h]
+  rw [Filter.EventuallyEq.fderivWithin_eq h]
 
 lemma Filter.EventuallyEq.rightDeriv_eq_nhds {x : ℝ} {g : ℝ → ℝ} (h : f =ᶠ[𝓝 x] g) :
     rightDeriv f x = rightDeriv g x := h.derivWithin_eq_nhds
@@ -505,7 +505,7 @@ lemma rightDeriv_right_continuous_of_mem_interior (hfc : ConvexOn ℝ s f)
   suffices Tendsto (rightDeriv f) (nhdsWithin w (Ioi w ∩ interior s)) (𝓝 (rightDeriv f w)) by
     sorry
   sorry
-  -- have h_lim := MonotoneOn.tendsto_nhdsWithin_Ioi (hfc.rightDeriv_mono.monotoneOn (Ioi w))
+  -- have h_lim := MonotoneOn.tendsto_nhdsGT (hfc.rightDeriv_mono.monotoneOn (Ioi w))
   --   (Monotone.map_bddBelow hfc.rightDeriv_mono bddBelow_Ioi)
   -- set l := sInf (rightDeriv f '' Ioi w)
   -- convert h_lim
@@ -582,7 +582,7 @@ lemma hasLeftDerivAt (hfc : ConvexOn ℝ univ f) (x : ℝ) :
     refine monotoneOn_iff_forall_lt.mpr fun y (hy : y < x) z (hz : z < x) hz' ↦ ?_
     simp_rw [slope_def_field]
     exact hfc.secant_mono trivial trivial trivial hy.ne hz.ne hz'.le
-  exact MonotoneOn.tendsto_nhdsWithin_Iio h_mono (bddAbove_slope_Iio hfc x)
+  exact MonotoneOn.tendsto_nhdsLT h_mono (bddAbove_slope_Iio hfc x)
 
 lemma differentiableWithinAt_Iio (hfc : ConvexOn ℝ univ f) (x : ℝ) :
     DifferentiableWithinAt ℝ f (Iio x) x :=
@@ -642,7 +642,7 @@ lemma leftDeriv_le_rightDeriv (hfc : ConvexOn ℝ univ f) : leftDeriv f ≤ righ
 lemma rightDeriv_right_continuous (hfc : ConvexOn ℝ univ f) (w : ℝ) :
     ContinuousWithinAt (rightDeriv f) (Ici w) w := by
   simp_rw [← continuousWithinAt_Ioi_iff_Ici, ContinuousWithinAt]
-  have h_lim := MonotoneOn.tendsto_nhdsWithin_Ioi (hfc.rightDeriv_mono.monotoneOn (Ioi w))
+  have h_lim := MonotoneOn.tendsto_nhdsGT (hfc.rightDeriv_mono.monotoneOn (Ioi w))
     (Monotone.map_bddBelow hfc.rightDeriv_mono bddBelow_Ioi)
   set l := sInf (rightDeriv f '' Ioi w)
   convert h_lim

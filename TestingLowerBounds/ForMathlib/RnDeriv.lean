@@ -3,7 +3,7 @@ Copyright (c) 2024 Rémy Degenne. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
-import Mathlib.MeasureTheory.Decomposition.RadonNikodym
+import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
 import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 
 /-!
@@ -193,7 +193,7 @@ lemma toReal_rnDeriv_map [IsFiniteMeasure μ] [SigmaFinite ν] (hμν : μ ≪ �
     {g : α → β} (hg : Measurable g) [SigmaFinite (ν.trim hg.comap_le)] [SigmaFinite (ν.map g)] :
     (fun a ↦ ((μ.map g).rnDeriv (ν.map g) (g a)).toReal)
       =ᵐ[ν] ν[(fun a ↦ (μ.rnDeriv ν a).toReal) | mβ.comap g] := by
-  refine ae_eq_condexp_of_forall_setIntegral_eq _ ?_ ?_ ?_ ?_
+  refine ae_eq_condExp_of_forall_setIntegral_eq _ ?_ ?_ ?_ ?_
   · exact Measure.integrable_toReal_rnDeriv
   · rintro _ ⟨t, _, rfl⟩ _
     refine Integrable.integrableOn ?_
@@ -304,7 +304,7 @@ lemma ae_integrable_mul_rnDeriv_of_ae_integrable {κ : α → Measure β} [Sigma
   filter_upwards [h] with a ha
   by_cases h_zero : μ.rnDeriv ν a = 0
   · rw [h_zero]
-    simp only [ENNReal.zero_toReal, zero_mul, integrable_zero]
+    simp only [ENNReal.toReal_zero, zero_mul, integrable_zero]
   · apply Integrable.const_mul
     exact ha h_zero
 

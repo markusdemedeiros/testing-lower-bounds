@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Rémy Degenne, Lorenzo Luccioli
 -/
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
-import Mathlib.MeasureTheory.Constructions.Prod.Integral
+import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Order.CompletePartialOrder
 import TestingLowerBounds.CurvatureMeasure
 import TestingLowerBounds.Divergences.StatInfo.StatInfo
@@ -105,7 +105,7 @@ lemma fDiv_statInfoFun_eq_integral_max_of_nonneg_of_le [IsFiniteMeasure μ] [IsF
     (fDiv (statInfoDivFun β γ) μ ν).toReal
       = ∫ x, max 0 (γ - β * ((∂μ/∂ν) x).toReal) ∂ν := by
   simp_rw [toReal_fDiv_statInfoFun_eq_integral_add, derivAtTop_statInfoDivFun_of_nonneg_of_le hβ hγ,
-    ENNReal.zero_toReal, zero_mul, add_zero, statInfoFun_of_le hγ]
+    ENNReal.toReal_zero, zero_mul, add_zero, statInfoFun_of_le hγ]
 
 lemma fDiv_statInfoFun_eq_integral_max_of_nonneg_of_gt [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     (hβ : 0 ≤ β) (hγ : β < γ) :
@@ -129,7 +129,7 @@ lemma fDiv_statInfoFun_eq_integral_max_of_nonpos_of_gt [IsFiniteMeasure μ] [IsF
     (fDiv (statInfoDivFun β γ) μ ν).toReal
       = ∫ x, max 0 (β * ((∂μ/∂ν) x).toReal - γ) ∂ν := by
   simp_rw [toReal_fDiv_statInfoFun_eq_integral_add,
-    derivAtTop_statInfoDivFun_of_nonpos_of_gt hβ hγ, statInfoFun_of_gt hγ, ENNReal.zero_toReal,
+    derivAtTop_statInfoDivFun_of_nonpos_of_gt hβ hγ, statInfoFun_of_gt hγ, ENNReal.toReal_zero,
     zero_mul, add_zero]
 
 lemma fDiv_statInfoFun_eq_zero_of_nonneg_of_nonpos [IsFiniteMeasure μ] [IsFiniteMeasure ν]

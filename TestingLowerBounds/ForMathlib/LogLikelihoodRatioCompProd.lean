@@ -50,7 +50,7 @@ lemma integrable_llr_compProd_of_integrable_llr [CountableOrCountablyGenerated �
       calc log ((∂μ/∂ν) a).toReal + ∫ b, log ((∂κ a/∂η a) b).toReal ∂κ a
         _ = ∫ b, log ((∂μ/∂ν) a).toReal + log ((∂κ a/∂η a) b).toReal ∂κ a := by
           rw [integral_add (integrable_const _)]
-          · simp only [integral_const, measure_univ, ENNReal.one_toReal, smul_eq_mul, one_mul]
+          · simp only [integral_const, measure_univ, ENNReal.toReal_one, smul_eq_mul, one_mul]
           · exact (llr_def _ _).symm ▸ hκηa_ae
         _ = ∫ b, log (((∂μ/∂ν) a).toReal * ((∂κ a/∂η a) b).toReal) ∂κ a := by
           have hκη_pos := Measure.rnDeriv_toReal_pos ha
@@ -119,7 +119,7 @@ lemma integrable_integral_llr_of_integrable_llr_compProd [CountableOrCountablyGe
       _ = ∫ b, log ((∂μ/∂ν) a).toReal + log ((∂κ a/∂η a) b).toReal ∂κ a := by
         rw [llr_def] at hκη_int
         rw [integral_add (integrable_const _) hκη_int]
-        simp only [integral_const, measure_univ, ENNReal.one_toReal, smul_eq_mul, one_mul]
+        simp only [integral_const, measure_univ, ENNReal.toReal_one, smul_eq_mul, one_mul]
       _ = ∫ b, log (((∂μ/∂ν) a).toReal * ((∂κ a/∂η a) b).toReal) ∂κ a := by
         have hκη_pos := Measure.rnDeriv_toReal_pos ha
         apply integral_congr_ae

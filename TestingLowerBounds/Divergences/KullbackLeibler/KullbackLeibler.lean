@@ -185,7 +185,7 @@ lemma kl_ge_mul_log (μ ν : Measure α) [IsFiniteMeasure μ] [IsFiniteMeasure �
   rotate_left
   · simp [ENNReal.toReal_eq_zero_iff, hμ]
   · simp [ENNReal.toReal_eq_zero_iff, hν]
-  simp only [ENNReal.toReal_inv, log_inv, sub_neg_eq_add, measure_univ, ENNReal.one_toReal,
+  simp only [ENNReal.toReal_inv, log_inv, sub_neg_eq_add, measure_univ, ENNReal.toReal_one,
     add_le_add_iff_right] at h
   rw [ENNReal.ofReal_le_ofReal_iff'] at h
   cases h with

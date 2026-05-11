@@ -4,7 +4,7 @@ import Mathlib.Tactic.Ring.RingNF
 
 --PR this to mathlib
 --the hp LinearOrderedField may not be optimal
-variable {α : Type*} [LinearOrderedField α]
+variable {α : Type*} [Field α] [LinearOrder α]
 
 lemma max_eq_add_add_abs_sub (a b : α) : max a b = 2⁻¹  * (a + b + |a - b|) := by
   rw [← max_add_min a, ← max_sub_min_eq_abs', add_sub_left_comm, add_sub_cancel_right]

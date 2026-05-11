@@ -76,7 +76,7 @@ lemma hellingerDivFun_apply_of_pos_of_ne_one (ha_pos : 0 < a) (ha_one : a ≠ 1)
   rw [hellingerDivFun_of_pos_of_ne_one ha_pos ha_one]
   by_cases hx0 : x = 0
   · rw [hx0, DivFunction.ofReal_apply_zero_of_continuousWithinAt]
-    · simp only [hellingerFun_apply_zero, ENNReal.ofReal_one, ENNReal.zero_toReal, ne_eq,
+    · simp only [hellingerFun_apply_zero, ENNReal.ofReal_one, ENNReal.toReal_zero, ne_eq,
         ha_pos.ne', not_false_eq_true, zero_rpow, zero_sub, mul_neg, mul_one, sub_neg_eq_add]
       rw [add_comm, ← sub_eq_add_neg, inv_mul_cancel₀, ENNReal.ofReal_one]
       rwa [sub_ne_zero]
