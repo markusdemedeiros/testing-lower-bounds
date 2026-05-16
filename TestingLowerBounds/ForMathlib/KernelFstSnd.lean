@@ -120,8 +120,7 @@ lemma compProd_apply_eq_compProd_snd' (κ : Kernel α β) (η : Kernel (α × β
     [IsSFiniteKernel κ] [IsSFiniteKernel η] (a : α) :
     (κ ⊗ₖ η) a = (κ a) ⊗ₘ (snd' η a) := by
   ext s hs
-  simp_rw [compProd_apply _ _ _ hs, Measure.compProd_apply hs, snd'_apply]
-  rfl
+  simp_rw [compProd_apply hs κ η a, Measure.compProd_apply hs, snd'_apply]
 
 end Kernel
 

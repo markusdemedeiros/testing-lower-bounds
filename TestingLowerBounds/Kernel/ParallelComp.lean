@@ -20,23 +20,6 @@ variable {α β γ δ : Type*} {mα : MeasurableSpace α} {mβ : MeasurableSpace
 
 section ParallelComp
 
--- todo: give direct definition, and use this to build compProd?
-/-- Parallel product of two kernels. -/
-noncomputable
-def parallelComp (κ : Kernel α β) (η : Kernel γ δ) : Kernel (α × γ) (β × δ) :=
-  (prodMkRight γ κ) ×ₖ (prodMkLeft α η)
-
-@[inherit_doc]
-scoped[ProbabilityTheory] infixl:100 " ∥ₖ " => ProbabilityTheory.Kernel.parallelComp
-
-lemma parallelComp_apply (κ : Kernel α β) [IsSFiniteKernel κ]
-    (η : Kernel γ δ) [IsSFiniteKernel η] (x : α × γ) :
-    (κ ∥ₖ η) x = (κ x.1).prod (η x.2) := by
-  rw [parallelComp, prod_apply, prodMkRight_apply, prodMkLeft_apply]
-
-instance (κ : Kernel α β) (η : Kernel γ δ) : IsSFiniteKernel (κ ∥ₖ η) := by
-  rw [parallelComp]; infer_instance
-
 instance (κ : Kernel α β) [IsFiniteKernel κ] (η : Kernel γ δ) [IsFiniteKernel η] :
     IsFiniteKernel (κ ∥ₖ η) := by
   rw [parallelComp]; infer_instance
@@ -53,19 +36,6 @@ lemma prod_eq_parallelComp_comp_copy (κ : Kernel α β) [IsSFiniteKernel κ]
   rw [lintegral_dirac']
   swap; · exact Kernel.measurable_coe _ hs
   rw [parallelComp_apply]
-
-lemma swap_parallelComp {κ : Kernel α β} [IsSFiniteKernel κ]
-    {η : Kernel γ δ} [IsSFiniteKernel η] :
-    (swap β δ) ∘ₖ (κ ∥ₖ η) = (η ∥ₖ κ) ∘ₖ (swap α γ) := by
-  ext ac s hs
-  rw [comp_apply, comp_apply, swap_apply, parallelComp_apply,
-    Measure.bind_apply hs (Kernel.measurable _), Measure.bind_apply hs (Kernel.measurable _),
-    lintegral_dirac' _ (Kernel.measurable_coe _ hs), parallelComp_apply]
-  simp_rw [swap_apply' _ hs]
-  change ∫⁻ (a : β × δ), s.indicator (fun _ ↦ 1) a.swap ∂(κ ac.1).prod (η ac.2) = _
-  rw [lintegral_indicator_const_comp measurable_swap hs, one_mul,
-    ← Measure.map_apply measurable_swap hs, Measure.prod_swap]
-  rfl
 
 --move this and PR it to mathlib, it should go right after `Kernel.measurable_Kernel_prod_mk_left'`, but in that file ∘ₖ is not defined, so maybe we should find a better place for it or modify the proof so it does not need it
 lemma measurable_Kernel_prod_mk_left'' {κ : Kernel α β}
@@ -84,12 +54,5 @@ lemma measurable_Kernel_prod_mk_left'' {κ : Kernel α β}
     (MeasurableSet.univ.prod ht)
 
 end ParallelComp
-
---todo: move.
-@[simp]
-lemma swap_prod {κ : Kernel α β} [IsSFiniteKernel κ]
-    {η : Kernel α γ} [IsSFiniteKernel η] :
-    (swap β γ) ∘ₖ (κ ×ₖ η) = (η ×ₖ κ) := by
-  simp_rw [prod_eq_parallelComp_comp_copy, ← comp_assoc, swap_parallelComp, comp_assoc, swap_copy]
 
 end ProbabilityTheory.Kernel
