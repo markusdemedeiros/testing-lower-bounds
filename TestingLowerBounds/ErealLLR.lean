@@ -68,7 +68,7 @@ lemma EReal.llr_smul_left [IsFiniteMeasure μ] [μ.HaveLebesgueDecomposition ν]
   have h := μ.rnDeriv_smul_left_of_ne_top ν hc_ne_top
   filter_upwards [hμν.ae_le h] with x hx_eq
   rw [hx_eq]
-  simp only [Pi.smul_apply, smul_eq_mul, ENNReal.toReal_mul]
+  simp only [Pi.smul_apply, smul_eq_mul]
   rw [ENNReal.log_mul_add, add_comm]
 
 lemma EReal.llr_smul_right [IsFiniteMeasure μ] [μ.HaveLebesgueDecomposition ν]
@@ -78,7 +78,7 @@ lemma EReal.llr_smul_right [IsFiniteMeasure μ] [μ.HaveLebesgueDecomposition ν
   have h := μ.rnDeriv_smul_right_of_ne_top ν hc hc_ne_top
   filter_upwards [hμν.ae_le h] with x hx_eq
   rw [hx_eq]
-  simp only [Pi.smul_apply, smul_eq_mul, ENNReal.toReal_mul]
+  simp only [Pi.smul_apply, smul_eq_mul]
   rw [ENNReal.log_mul_add, ENNReal.log_inv, add_comm, sub_eq_add_neg]
 
 end MeasureTheory
